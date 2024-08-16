@@ -1,0 +1,30 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+config EXAMPLES_COMP
+	bool "COMP example"
+	default n
+	depends on COMP && LIB_BOARDCTL
+	---help---
+		Enable the comp example
+
+if EXAMPLES_COMP
+
+config EXAMPLES_COMP_DEVPATH
+	string "COMP device path"
+	default "/dev/comp"
+	---help---
+		The default path to the comp device. Default: /dev/comp
+
+config EXAMPLES_COMP_NSAMPLES
+	int "Number of Sample Groups"
+	default 0
+	depends on !NSH_BUILTIN_APPS
+	---help---
+		If NSH_BUILTIN_APPS is defined, then the number of samples is provided
+		on the command line and this value is ignored.  Otherwise, this number
+		of samples is collected and the program terminates.  Default:  0 (samples
+		are collected indefinitely).
+endif

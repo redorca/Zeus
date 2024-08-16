@@ -1,0 +1,28 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+menuconfig EXAMPLES_ZEUS_DEMO
+	bool "ZEUS demo example"
+	default n
+	---help---
+
+
+if EXAMPLES_ZEUS_DEMO
+
+config EXAMPLES_ZEUS_DEMO_PROGNAME
+	string "Program name"
+	default "zeus demo"
+	depends on BUILD_KERNEL
+	---help---
+		This is the name of zeus demo.
+
+config EXAMPLES_DEMO_MAGNETIC
+	bool
+	prompt "Magnetic demo Support"
+	default n
+	---help---
+	  This option enables the magnetic demo.
+
+endif

@@ -1,0 +1,5 @@
+# file system and mount it at /tmp
+
+mount -t vfat /dev/mtdblock1 /mnt
+echo "rcS: Mounted /mnt"
+

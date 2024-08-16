@@ -1,0 +1,123 @@
+############################################################################
+#    drivers/zglue_fast/Make.defs
+#
+#   Copyright (C) 2013, 2016 Gregory Nutt. All rights reserved.
+#   Author: Gregory Nutt <gnutt@nuttx.org>
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in
+#    the documentation and/or other materials provided with the
+#    distribution.
+# 3. Neither the name NuttX nor the names of its contributors may be
+#    used to endorse or promote products derived from this software
+#    without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+# COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+# OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+# AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+# ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+#
+############################################################################
+
+# Don't build anything if there is no SPI support
+
+SHELL=/bin/bash
+
+-include ${TOPDIR}/.config
+
+DRIVERS_DIR = $(TOPDIR)/drivers
+FAST_DRIVER_DIR = $(DRIVERS_DIR)/zglue_fast
+
+FAST_LIB_BASE  = libfastapi
+FASTAPI_LIB       = $(FAST_LIB_BASE)$(LIBEXT)
+ifeq ($(CONFIG_ZEUS1),y)
+  ZEUS = zeus1
+endif
+ifeq ($(CONFIG_ZEUS2),y)
+  ZEUS = zeus2
+endif
+ZEUS_LIB = $(FAST_LIB_BASE)_$(ZEUS)$(LIBEXT)
+
+ifeq ($(CONFIG_ARCH_HAVE_FAST),y)
+
+CSRCS += zglue_fast.c
+
+DEPPATH += --dep-path zglue_fast
+VPATH += zglue_fast
+FAST_CONFIG_FILE_H_FILE = zglue_fast_config_file.h
+FAST_CONFIG_BIN_FILE = fast_config_file.bin
+BUILT_FILES = $(FAST_CONFIG_BIN_FILE) $(FAST_CONFIG_FILE_H_FILE)
+
+ifeq ($(ZEUS),)
+#error No zeus architecture selected.
+endif
+
+define COPY
+	@echo -e "\tCopy ${1: -8} to $${2: -10}"
+	cp -a "$1" "$2"
+endef
+
+zglue_fast/zglue_fast.c : $(FAST_DRIVER_DIR)/$(FAST_CONFIG_FILE_H_FILE)
+	@echo "++++++ $$(pwd)"
+
+ifeq ($(CONFIG_FAST_CONFIG_FILE),y)
+FAST_CONFIG_DIR  = $(FAST_DRIVER_DIR)/zglue_fast_config_files
+
+ifeq ($(CONFIG_ZEUS1_DALLAS),y)
+        ZEUS_PLATFORM = dallas
+endif #CONFIG_ZEUS1_DALLAS
+ifeq ($(CONFIG_ZEUS1_AUSTIN),y)
+        ZEUS_PLATFORM = austin
+endif #CONFIG_ZEUS1_AUSTIN
+ifeq ($(CONFIG_ZEUS2_CHICAGO),y)
+        ZEUS_PLATFORM = chicago
+endif #CONFIG_ZEUS2_CHICAGO
+ifeq ($(CONFIG_ZEUS2_CHICAGO_PP),y)
+        ZEUS_PLATFORM = chicago_pp
+endif #CONFIG_ZEUS2_CHICAGO_PP
+ifeq ($(ZEUS_PLATFORM),)
+$(error no platform to build on defined.)
+endif
+ZEUS_PLATFORM_CONFIG_BIN = $(FAST_CONFIG_DIR)/binary.fast_config_file_$(ZEUS_PLATFORM).bin
+endif # CONFIG_FAST_CONFIG_FILE
+
+EXTRA_CLEAN += $(FAST_DRIVER_DIR)/fast_config_file.bin $(FAST_DRIVER_DIR)/$(FAST_CONFIG_FILE_H_FILE)
+
+.PHONY: libfastapi
+
+libdrivers.a : libfastapi $(FAST_DRIVER_DIR)/$(FAST_CONFIG_FILE_H_FILE)
+
+$(FAST_DRIVER_DIR)/$(FAST_CONFIG_BIN_FILE) : $(ZEUS_PLATFORM_CONFIG_BIN)
+	$(Q) $(call COPY,$(ZEUS_PLATFORM_CONFIG_BIN),$(FAST_DRIVER_DIR)/$(FAST_CONFIG_BIN_FILE))
+
+$(FAST_DRIVER_DIR)/$(FAST_CONFIG_FILE_H_FILE): $(FAST_DRIVER_DIR)/$(FAST_CONFIG_BIN_FILE)
+	$(Q) cd $(FAST_DRIVER_DIR) && xxd -i fast_config_file.bin > $(FAST_CONFIG_FILE_H_FILE)
+	$(Q) cd $(FAST_DRIVER_DIR) && sed -i -e 's/unsigned char/__attribute__((section(".fastconfigfilesection"))) unsigned char/g' $(FAST_CONFIG_FILE_H_FILE)
+
+
+libfastapi: MSG="create libdrivers.a\\naddlib $(FAST_DRIVER_DIR)/$(ZEUS)/$(ZEUS_LIB)\\nsave\\nend\\n"
+libfastapi:
+	@echo -e "$(MSG)" | arm-none-eabi-ar -M
+
+zglue_fast_clean:
+	$(Q) @echo "-===============================================-"
+	$(Q) cd $(FAST_DRIVER_DIR) && $(RM) $(BUILT_FILES)
+
+clean: zglue_fast_clean
+
+
+endif # CONFIG_ARCH_HAVE_FAST

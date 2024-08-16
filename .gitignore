@@ -1,0 +1,5 @@
+*
+!apps/
+!nuttx/
+!zgluesdk.tar.gz
+!.gitignore

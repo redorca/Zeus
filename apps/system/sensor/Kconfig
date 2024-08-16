@@ -1,0 +1,14 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+config SYSTEM_SENSOR
+	bool "Sensor Data Example"
+	default n
+	---help---
+		Enable support for the NSH 'sensor' replacement command.
+
+if SYSTEM_SENSOR
+endif
+

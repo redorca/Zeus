@@ -1,0 +1,48 @@
+############################################################################
+# net/nimble/controller/Make.defs
+#
+#   Copyright (C) 2011-2012, 2016 Gregory Nutt. All rights reserved.
+#   Author: Gregory Nutt <gnutt@nuttx.org>
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in
+#    the documentation and/or other materials provided with the
+#    distribution.
+# 3. Neither the name NuttX nor the names of its contributors may be
+#    used to endorse or promote products derived from this software
+#    without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+# COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+# OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+# AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+# ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+#
+############################################################################
+
+ifeq ($(CONFIG_BLE_NIMBLE_CONTROLLER),y)
+
+NIMBLE_CSRCS += ble_ll_adv.c ble_ll_conn.c ble_ll_ctrl.c ble_ll_hci_ev.c ble_ll_resolv.c ble_ll_sched.c ble_ll_whitelist.c ble_ll.c 
+NIMBLE_CSRCS += ble_ll_conn_hci.c ble_ll_hci.c ble_ll_rand.c ble_ll_scan.c ble_ll_supp_cmd.c ble_ll_xcvr.c ble_ll_utils.c ble_ll_trace.c
+
+#Test module
+#NIMBLE_CSRCS += ble_ll_dtm.c
+
+DEPPATH += --dep-path controller$(DELIM)src
+
+VPATH += : controller$(DELIM)src
+
+endif

@@ -1,0 +1,34 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+if ARCH_BOARD_NRF52840_DK
+
+config CODE_ANALYSIS
+  bool "code size analysis"
+  default y
+  ---help---
+    This is for analysis each module code size and data size
+
+config ARCH_HAVE_FAST
+	bool "Enable zglue Zeus platform"
+	default n
+	---help---
+		Enable Zglue (First generation) Architecture
+
+config QSPI_FW_PARTITION
+  bool "firmware partion for upgrade"
+  default n
+  depends on MTD_MX25RXX
+  ---help---
+    This is for firmware upgrade partition , it will take 1M of first
+    space from external qspi flash
+
+config INTERNAL_FLASH_FILESYSTEM
+  bool "enable internal flash file-system"
+  default y
+  ---help---
+    THis will create vFAT filesystem on the last 256K of internal flash
+
+endif # ARCH_BOARD_NRF52840_DK

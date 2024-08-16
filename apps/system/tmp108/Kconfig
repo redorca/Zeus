@@ -1,0 +1,41 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+menuconfig SYSTEM_TMP108
+	bool "Temperature"
+	default n
+	depends on TMP108_I2C
+	---help---
+		Enable support for the NSH temp command.  This command will read the
+		current temperature from an LM-75 (or compatible) temperature sensor
+		and show the temperature on stdout.
+
+if SYSTEM_TMP108
+
+config SYSTEM_TMP108_DEVNAME
+	string "Temperature sensing device"
+	default "/dev/temp0"
+
+choice
+	prompt "Temperature units"
+	default SYSTEM_TMP108_FAHRENHEIT
+
+config SYSTEM_TMP108_FAHRENHEIT
+	bool "Fahrenheit"
+
+config SYSTEM_TMP108_CELSIUS
+	bool "Celsius"
+
+endchoice
+
+config SYSTEM_TMP108_STACKSIZE
+	int "Stack size (bytes)"
+	default 1024
+
+config SYSTEM_TMP108_PRIORITY
+	int "Command priority"
+	default 100
+
+endif

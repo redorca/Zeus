@@ -1,0 +1,39 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+config EXAMPLES_QDECODER
+	bool "Quadrature decoder example"
+	default n
+	depends on QDECODER
+	---help---
+		Enable the quadrature decoder example
+
+if EXAMPLES_QDECODER
+
+config EXAMPLES_QDECODER_DEVPATH
+	string "QE device path"
+	default "/dev/qdec0"
+	---help---
+		The default path to the QD device
+
+config EXAMPLES_QDECODER_NSAMPLES
+	int "Number of samples"
+	default 0
+	depends on !NSH_BUILTIN_APPS
+	---help---
+		If CONFIG_NSH_BUILTIN_APPS is defined, then the number of
+		samples is provided on the command line and this value is ignored.
+		Otherwise, this number of samples is collected and the program
+		terminates. If the value is 0, samples are collected indefinitely.
+
+config EXAMPLES_QDECODER_DELAY
+	int "Delay between samples"
+	default 10
+	---help---
+		This value provides the delay (in seconds) before sample data .
+		If CONFIG_NSH_BUILTIN_APPS is defined, then this value is the default
+		delay if no other delay is provided on the command line.
+
+endif

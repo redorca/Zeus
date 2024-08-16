@@ -1,0 +1,99 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+menuconfig MCUBOOT
+	bool
+	prompt "MCUBOOT Library Support"
+	default n
+	help
+	  This option enables the mcuboot secure library.
+
+if MCUBOOT
+
+choice
+  prompt "Select cryptography Library"
+  default USE_MBED_TLS
+
+config USE_MBED_TLS
+  bool "use mbedtls as cryptography"
+  select MBEDTLS
+  help
+  link mbedtls as cryptography library
+
+config USE_TINYCRYPT
+  bool "use tinycrypt as cryptography library"
+  select TINYCRYPT
+  help
+  This option enable tinycrypt as cryptography library for mcuboot
+
+endchoice
+
+config MCUBOOT_APP_IMAGE_MAX_SIZE
+  hex "The max size of application"
+  default 0x40000
+  help
+  This is the MAX size of flash application
+
+config MCUBOOT_APP_IMAGE_OFFSET
+  hex "The offset of application in flash"
+  default 0x10000
+  help
+  This is the application offset in flash memory
+
+config MCUBOOT_APP_IMAGE_SCRATCH_SIZE
+  hex "The image swap sector size , it should be one sector at least"
+  default 0x2000
+  help
+  This is the scratch swap partition size, it should be one sector at least for swap
+
+config MCUBOOT_FLASH_WRITE_ALIGN
+  int "flash  write align size"
+  default 4
+  help
+  This is the bootloader  for flash write align size
+
+config MCUBOOT_VALIDATE_SLOT0
+  bool "Signature verification on image"
+  default y
+  depends on MCUBOOT_SIGN_RSA || MCUBOOT_SIGN_EC || MCUBOOT_SIGN_EC256
+  help
+  This is the option for verfiy the image signature
+
+choice
+  prompt "Select the Second Image Location"
+  default MCUBOOT_SECOND_IMAGE_INTERNAL
+
+config MCUBOOT_SECOND_IMAGE_INTERNAL
+  bool "Second image is located in internal flash"
+  help
+  Internal Flash as second image location
+
+config MCUBOOT_SECOND_IMAGE_QSPI
+  bool "Second image is location in QSPI flash"
+  help
+  QSPI Flash as second image location
+
+endchoice
+
+config MCUBOOT_SIGN_RSA
+  bool "RSA signature"
+  default y
+  help
+  This option enables the RSA crypto for signature
+
+config MCUBOOT_SIGN_EC
+  bool "EC signature"
+  default n
+  help
+  THis option enable the EC crypto for signature
+
+config MCUBOOT_SIGN_EC256
+  bool "EC256 signature"
+  default n
+  help
+  This option enable the EC256 crypto for signature
+
+endif
+

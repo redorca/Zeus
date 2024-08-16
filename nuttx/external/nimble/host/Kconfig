@@ -1,0 +1,19 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+if BLE_NIMBLE_HOST
+
+#Current we support MESH only or BLE only
+
+#1. ble host mesh support
+config BLE_NIMBLE_HOST_MESH_SUPPORT
+	bool "Nimble host mesh Support"
+	default n
+
+if BLE_NIMBLE_HOST_MESH_SUPPORT
+	#source host/mesh/Kconfig
+endif # BLE_NIMBLE_HOST_MESH_SUPPORT
+
+endif # BLE_NIMBLE_HOST

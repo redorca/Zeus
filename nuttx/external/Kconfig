@@ -1,0 +1,16 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+source external/mbedtls/Kconfig
+
+source external/tinycrypt/Kconfig
+
+source external/mcuboot/Kconfig
+
+source external/nimble/Kconfig
+
+source external/systemview/Kconfig
+
+source external/lwip/Kconfig

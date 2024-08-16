@@ -1,0 +1,13 @@
+#
+# For a description of the syntax of this configuration file,
+# see misc/tools/kconfig-language.txt.
+#
+
+# this config option is for bluetooth feature , please don't
+# delete this file
+
+config WIRELESS_BT
+	bool "Bluetooth feature support"
+	default n
+	---help---
+	bluetooth feature support option

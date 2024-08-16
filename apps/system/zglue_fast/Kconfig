@@ -1,0 +1,20 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+menuconfig SYSTEM_FAST_API_NSH
+	bool "Zglue Smart fabric NSH commands tool"
+	default n
+	depends on NSH_BUILTIN_APPS && SYSTEM_FAST_DRIVER
+	---help---
+		Enable nsh support for the zglue smartfabric.
+
+if SYSTEM_FAST_API_NSH
+
+config SYSTEM_FAST_DEBUG_API_NSH
+	bool "Enable Zglue Smart Fabric NSH Debug APIs"
+	default n
+	---help---
+		Enables debug APIs supported by the Zglue smart fabric .
+endif

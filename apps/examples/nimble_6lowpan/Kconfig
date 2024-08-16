@@ -1,0 +1,21 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+config EXAMPLES_NIMBLE_6LOWPAN
+	bool "Nimble IPV6 for low power area network example"
+	default n
+	---help---
+		Enable the Nimble 6lowpan example
+
+if EXAMPLES_NIMBLE_6LOWPAN
+
+config EXAMPLES_NIMBLE_6LOWPAN_PROGNAME
+	string "Program name"
+	default "nimble 6lowpan"
+	---help---
+		This is the name of the program that will be use when the NIMBLE 6LOWPAN ELF
+		program is installed.
+
+endif

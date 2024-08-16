@@ -1,0 +1,22 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+config ARCH_HAVE_FAST
+	bool "Enable zglue Zeus platform"
+	default y
+	---help---
+		Enable Zglue (First generation) Architecture
+
+config ARCH_HAVE_JTAG
+	bool "Enable zglue Zeus JTAG"
+	default y
+	---help---
+		Enable Zglue (First generation) Architecture
+
+config CODE_ANALYSIS
+  bool "code size analysis"
+  default n
+  ---help---
+    This is for analysis each module code size and data size

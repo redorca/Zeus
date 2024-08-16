@@ -1,0 +1,30 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+config EXAMPLES_LSM6DS3
+	bool "lsm6ds3 example"
+	default n
+	depends on LSM6DS3 && LIB_BOARDCTL
+	---help---
+		Enable the lsm6ds3 example
+
+if EXAMPLES_LSM6DS3
+
+config EXAMPLES_LSM6DS3_DEVPATH
+	string "LSM6DS3 device path"
+	default "/dev/lsm6ds3"
+	---help---
+		The default path to the lsm6ds3 device. Default: /dev/lsm6ds3
+
+config EXAMPLES_LSM6DS3_NSAMPLES
+	int "Number of loops"
+	default 0
+	depends on !NSH_BUILTIN_APPS
+	---help---
+		If NSH_BUILTIN_APPS is defined, then the number of samples is provided
+		on the command line and this value is ignored.  Otherwise, this number
+		of samples is collected and the program terminates.  Default:  0 (samples
+		are collected indefinitely).
+endif

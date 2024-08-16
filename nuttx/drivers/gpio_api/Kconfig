@@ -1,0 +1,22 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+
+config     ARCH_VIRTUAL_GPIO
+           bool "gpio driver lib"
+           default n
+           ---help---
+                An internal gpio interface backed by chip code
+                that provides a general way for others to use
+                across mcus
+
+if ARCH_VIRTUAL_GPIO
+
+config     TARGET_DRIVER
+           string
+           default "gpio_api"
+           ---help---
+                Specifies the driver involved.
+endif

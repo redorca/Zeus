@@ -1,0 +1,59 @@
+############################################################################
+# net/nimble/host/Make.defs
+#
+#   Copyright (C) 2011-2012, 2016 Gregory Nutt. All rights reserved.
+#   Author: Gregory Nutt <gnutt@nuttx.org>
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in
+#    the documentation and/or other materials provided with the
+#    distribution.
+# 3. Neither the name NuttX nor the names of its contributors may be
+#    used to endorse or promote products derived from this software
+#    without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+# COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+# OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+# AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+# ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+#
+############################################################################
+
+ifeq ($(CONFIG_BLE_NIMBLE_UTIL),y)
+
+#tinycrypt
+NIMBLE_CSRCS += aes_decrypt.c aes_encrypt.c cbc_mode.c ccm_mode.c cmac_mode.c ctr_mode.c ctr_prng.c ecc.c ecc_dh.c ecc_dsa.c
+NIMBLE_CSRCS += ecc_platform_specific.c hmac.c hmac_prng.c sha256.c utils.c mem.c
+
+DEPPATH += --dep-path util$(DELIM)mem$(DELIM)src
+DEPPATH += --dep-path util$(DELIM)crc$(DELIM)src
+DEPPATH += --dep-path util$(DELIM)cbmem$(DELIM)src
+DEPPATH += --dep-path util$(DELIM)parse$(DELIM)src
+DEPPATH += --dep-path util$(DELIM)tinycrypt$(DELIM)src
+
+VPATH += : util$(DELIM)mem$(DELIM)src
+VPATH += : util$(DELIM)crc$(DELIM)src
+VPATH += : util$(DELIM)cbmem$(DELIM)src
+VPATH += : util$(DELIM)parse$(DELIM)src
+VPATH += : util$(DELIM)tinycrypt$(DELIM)src
+
+#CFLAGS += ${shell $(INCDIR) $(INCDIROPT) "$(CC)" $(TOPDIR)$(DELIM)external$(DELIM)nimble$(DELIM)util$(DELIM)mem$(DELIM)src}
+#CFLAGS += ${shell $(INCDIR) $(INCDIROPT) "$(CC)" $(TOPDIR)$(DELIM)external$(DELIM)nimble$(DELIM)util$(DELIM)crc$(DELIM)src}
+#CFLAGS += ${shell $(INCDIR) $(INCDIROPT) "$(CC)" $(TOPDIR)$(DELIM)external$(DELIM)nimble$(DELIM)util$(DELIM)cbmem$(DELIM)src}
+#CFLAGS += ${shell $(INCDIR) $(INCDIROPT) "$(CC)" $(TOPDIR)$(DELIM)external$(DELIM)nimble$(DELIM)util$(DELIM)parse$(DELIM)src}
+#CFLAGS += ${shell $(INCDIR) $(INCDIROPT) "$(CC)" $(TOPDIR)$(DELIM)external$(DELIM)nimble$(DELIM)util$(DELIM)tinycrypt$(DELIM)src}
+endif

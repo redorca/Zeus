@@ -1,0 +1,14 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+config EXAMPLES_CPPUT
+	bool "cpp Unit Test program Example"
+	default n
+	select UCLIBCXX
+	select HAVE_CXX
+	select CPPUTEST_FRAMEWORK
+	---help---
+		Enable the cpp Unit Test program
+

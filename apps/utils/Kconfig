@@ -1,0 +1,37 @@
+#
+# For a description of the syntax of this configuration file,
+# see misc/tools/kconfig-language.txt.
+#
+
+menu "Utils Library"
+
+config EASY_TIMER
+	bool "Easy timer feature support."
+	default n
+	---help---
+		Create a easy timer for application.
+
+config APP_TIMER
+	bool "Application timer feature support"
+	default n
+	---help---
+	       Create application timer
+
+config YMODEM_RECEIVER
+	bool "ymodem receiver slave"
+	default n
+	---help---
+		create ymodem receiver
+
+config ZGLUE_FAST_APP_API
+	bool "zglue fast app api"
+	default n
+	---help---
+		Enable zglue fast api for user.
+
+config STEPCNT_ALGO
+	bool "step counting algorithm"
+	default n
+	---help---
+		step counting algorithm base on the accelerometer
+endmenu

@@ -1,0 +1,30 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+config EXAMPLES_BMI160
+	bool "bmi160 example"
+	default n
+	depends on BMI160 && LIB_BOARDCTL
+	---help---
+		Enable the bmi160 example
+
+if EXAMPLES_BMI160
+
+config EXAMPLES_BMI160_DEVPATH
+	string "bmi160 device path"
+	default "/dev/bmi160"
+	---help---
+		The default path to the bmi160 device. Default: /dev/bmi160
+
+config EXAMPLES_BMI160_NSAMPLES
+	int "Number of loops"
+	default 0
+	depends on !NSH_BUILTIN_APPS
+	---help---
+		If NSH_BUILTIN_APPS is defined, then the number of samples is provided
+		on the command line and this value is ignored.  Otherwise, this number
+		of samples is collected and the program terminates.  Default:  0 (samples
+		are collected indefinitely).
+endif

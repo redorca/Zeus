@@ -1,0 +1,13 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+config EXAMPLES_MTDBLOCKRW
+	bool "MTD BLOCK R/W test"
+	default n
+	depends on MTD
+	---help---
+		Enable the MTD Block R/W test example.
+
+

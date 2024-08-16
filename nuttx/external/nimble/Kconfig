@@ -1,0 +1,79 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+menuconfig BLE_NIMBLE
+	bool
+	prompt "NIMBLE Library Support"
+	default n
+	help
+	  This option enables the external nimble stack library.
+
+if BLE_NIMBLE
+
+config NIMBLE_SYS_1_BLOCK_SIZE
+  int "nimble system 1 memory block size"
+  default 128
+  help
+  nimble system 1 memory block size
+
+config NIMBLE_SYS_1_BLOCK_COUNT
+  int "nimble system 1 memory block count"
+  default 32
+  help
+  nimble system 1 memory block count
+
+config NIMBLE_SYS_2_BLOCK_SIZE
+  int "nimble system 2 memory block size"
+  default 0
+  help
+  nimble system 2 memory block size
+
+config NIMBLE_SYS_2_BLOCK_COUNT
+  int "nimble system 2 memory block count"
+  default 0
+  help
+  nimble system 2 memory block count
+
+menuconfig BLE_NIMBLE_HOST
+	bool "Nimble host stack Support"
+	default n
+
+if BLE_NIMBLE_HOST
+source external/nimble/host/Kconfig
+endif
+
+menuconfig BLE_NIMBLE_CONTROLLER
+	bool "Nimble controller stack Support"
+	default n
+
+# current there is no option for controller , will add in further
+#source external/nimble/controller/Kconfig
+
+menuconfig BLE_NIMBLE_TRANSPORT
+	bool "Nimble transport Support"
+	default n
+
+if BLE_NIMBLE_TRANSPORT
+source external/nimble/transport/Kconfig
+endif
+
+menuconfig BLE_NIMBLE_OS
+	bool "Nimble OS Support"
+	default n
+
+menuconfig BLE_NIMBLE_UTIL
+	bool "Nimble UTIL Support"
+	default n
+
+menuconfig BLE_NIMBLE_HAL
+	bool "Nimble HAL Support"
+	default n
+	
+if BLE_NIMBLE_HAL
+source external/nimble/hal/Kconfig
+endif
+
+
+endif # BLE_NIMBLE

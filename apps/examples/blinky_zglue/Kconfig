@@ -1,0 +1,32 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+config EXAMPLES_BLINKY_ZGLUE
+	bool "Blinky zglue example"
+	default n
+    select SYSTEM_LIB_FASTAPI
+	---help---
+		Enable the NuttShell (NSH) example
+
+if EXAMPLES_BLINKY_ZGLUE
+
+config EXAMPLES_BLINKY_ZGLUE_PROGNAME
+	string "Program name"
+	default "blinky"
+	depends on BUILD_KERNEL
+	---help---
+		This is the name of the program that will be use when the NSH ELF
+		program is installed.
+
+config EXAMPLES_BLINKY_ZGLUE_PRIORITY
+	int "blinky task priority"
+	default 100
+
+config EXAMPLES_BLINKY_ZGLUE_STACKSIZE
+	int "blinky stack size"
+	default 2048
+
+endif
+

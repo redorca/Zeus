@@ -1,0 +1,31 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+config EXAMPLES_BLE_DFU
+	bool "BLE DFU example"
+	default n
+	depends on NRF52_BLUETOOTH
+	---help---
+		Enable the BLE \"DFU!\" example
+
+if EXAMPLES_BLE_DFU
+
+config EXAMPLES_BLE_DFU_PROGNAME
+	string "Program name"
+	default "dfu"
+	depends on BUILD_KERNEL
+	---help---
+		This is the name of the program that will be use when the NSH ELF
+		program is installed.
+
+config EXAMPLES_BLE_DFU_PRIORITY
+	int "Dfu task priority"
+	default 100
+
+config EXAMPLES_BLE_DFU_STACKSIZE
+	int "Dfu stack size"
+	default 2048
+
+endif

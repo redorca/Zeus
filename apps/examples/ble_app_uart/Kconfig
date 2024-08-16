@@ -1,0 +1,32 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+config EXAMPLES_BLE_APP_UART
+	bool "BLE app uart example"
+	default n
+	depends on NRF52_BLUETOOTH
+	---help---
+		Enable the BLE \"APP UART\" example
+
+
+if EXAMPLES_BLE_APP_UART
+
+config EXAMPLES_BLE_APP_UART_PROGNAME
+	string "Program name"
+	default "hello"
+	depends on BUILD_KERNEL
+	---help---
+		This is the name of the program that will be use when the NSH ELF
+		program is installed.
+
+config EXAMPLES_BLE_APP_UART_PRIORITY
+	int "Ble app uart task priority"
+	default 100
+
+config EXAMPLES_BLE_APP_UART_STACKSIZE
+	int "Ble app uart stack size"
+	default 2048
+
+endif

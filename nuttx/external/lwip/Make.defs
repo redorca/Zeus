@@ -1,0 +1,96 @@
+############################################################################
+# net/lwip/Make.defs
+#
+#   Copyright (C) 2011-2012, 2016 Gregory Nutt. All rights reserved.
+#   Author: Gregory Nutt <gnutt@nuttx.org>
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in
+#    the documentation and/or other materials provided with the
+#    distribution.
+# 3. Neither the name NuttX nor the names of its contributors may be
+#    used to endorse or promote products derived from this software
+#    without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+# COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+# OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+# AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+# ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+#
+############################################################################
+
+ifeq ($(CONFIG_LWIP),y)
+
+ifeq ($(CONFIG_LWIP_NUTTX_OS),y)
+LWIP_CSRCS += sys_arch.c
+endif
+
+ifeq ($(CONFIG_LWIP_CORE),y)
+LWIP_CSRCS += init.c def.c dns.c inet_chksum.c ip.c mem.c memp.c netif.c pbuf.c raw.c stats.c sys.c altcp.c altcp_alloc.c altcp_tcp.c tcp.c tcp_in.c tcp_out.c timeouts.c udp.c
+endif
+
+ifeq ($(CONFIG_LWIP_IP4),y)
+LWIP_CSRCS += autoip.c dhcp.c etharp.c icmp.c igmp.c ip4_frag.c ip4.c ip4_addr.c
+endif
+
+ifeq ($(CONFIG_LWIP_IP6),y)
+LWIP_CSRCS += dhcp6.c ethip6.c icmp6.c inet6.c ip6.c ip6_addr.c ip6_frag.c mld6.c nd6.c
+endif
+
+ifeq ($(CONFIG_LWIP_API),y)
+LWIP_CSRCS += api_lib.c api_msg.c err.c if_api.c netbuf.c netdb.c netifapi.c sockets.c tcpip.c
+endif
+
+ifeq ($(CONFIG_LWIP_NETIF),y)
+LWIP_CSRCS += ethernet.c bridgeif.c bridgeif_fdb.c slipif.c
+endif
+
+ifeq ($(CONFIG_LWIP_6LOWPAN),y)
+LWIP_CSRCS +=lowpan6_common.c lowpan6.c lowpan6_ble.c zepif.c
+endif
+
+ifeq ($(CONFIG_LWIP_PPP),y)
+endif
+
+ifeq ($(CONFIG_LWIP_SNMP),y)
+endif
+
+ifeq ($(CONFIG_LWIP_SNMP),y)
+endif
+
+DEPPATH += --dep-path src
+DEPPATH += --dep-path src$(DELIM)arch
+DEPPATH += --dep-path src$(DELIM)core
+DEPPATH += --dep-path src$(DELIM)core$(DELIM)ipv4
+DEPPATH += --dep-path src$(DELIM)core$(DELIM)ipv6
+DEPPATH += --dep-path src$(DELIM)api
+DEPPATH += --dep-path src$(DELIM)netif
+
+VPATH += :src
+VPATH += :src$(DELIM)arch
+VPATH += :src$(DELIM)core
+VPATH += :src$(DELIM)core$(DELIM)ipv4
+VPATH += :src$(DELIM)core$(DELIM)ipv6
+VPATH += :src$(DELIM)api
+VPATH += :src$(DELIM)netif
+
+CFLAGS += -I$(TOPDIR)$(DELIM)external$(DELIM)lwip$(DELIM)src$(DELIM)include
+#CFLAGS += -I$(TOPDIR)$(DELIM)external$(DELIM)lwip$(DELIM)src$(DELIM)include$(DELIM)compat
+#CFLAGS += -I$(TOPDIR)$(DELIM)external$(DELIM)lwip$(DELIM)src$(DELIM)include$(DELIM)lwip
+#CFLAGS += -I$(TOPDIR)$(DELIM)external$(DELIM)lwip$(DELIM)src$(DELIM)include$(DELIM)netif
+
+endif

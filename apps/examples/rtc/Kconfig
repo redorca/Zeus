@@ -1,0 +1,22 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+config EXAMPLES_RTC
+	bool "RTC example"
+	default n
+	depends on BUILD_FLAT
+	---help---
+		Enable the rtc example
+
+if EXAMPLES_RTC
+
+config EXAMPLE_COUNTER_DEVNAME
+	string "RTC device name"
+	default "/dev/rtc1"
+	---help---
+		This is the name of the timer device that will be tested.
+endif
+
+

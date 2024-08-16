@@ -1,0 +1,84 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+menuconfig LWIP
+	bool
+	prompt "LWIP Support"
+	default n
+	help
+	  This option enables the light weight ip stack.
+
+if LWIP
+
+config LWIP_NUTTX_OS
+  bool "LWIP nuttx os supprot"
+  default y
+  help
+  The nuttx os arch config for lwIP
+
+config LWIP_CORE
+  bool "LWIP core feature supprot"
+  default y
+  help
+  The minimum set of files needed for lwIP
+
+config LWIP_IP4
+  bool "LWIP ipv4 feature supprot"
+  default y
+  depends on LWIP_CORE
+  help
+  LWIP ipv4 feature supprot
+
+config LWIP_IP6
+  bool "LWIP ipv6 feature supprot"
+  default y
+  depends on LWIP_CORE
+  help
+  LWIP ipv6 feature supprot
+
+config LWIP_API
+  bool "LWIP api feature supprot"
+  default y
+  depends on LWIP_CORE
+  help
+  The files which implement the sequential and socket APIs
+
+config LWIP_NETIF
+  bool "LWIP netif feature supprot"
+  default y
+  depends on LWIP_CORE
+  help
+  Files implementing various generic network interface functions
+
+
+config LWIP_6LOWPAN
+  bool "LWIP 6LoWPAN feature supprot"
+  default y
+  depends on LWIP_CORE
+  help
+  IP6 for low power personal area network.
+
+config LWIP_PPP
+  bool "LWIP PPP feature supprot"
+  default n
+  depends on LWIP_CORE
+  help
+  Point-to-point protocol.
+
+config LWIP_SNMP
+  bool "LWIP SNMP feature supprot"
+  default n
+  depends on LWIP_CORE
+  help
+  Simple Network Management Protocol.
+
+config LWIP_HTTP
+  bool "LWIP HTTP feature supprot"
+  default n
+  depends on LWIP_CORE
+  help
+  HTTP server + client.
+
+endif # LWIP

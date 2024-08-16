@@ -1,0 +1,30 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+config EXAMPLES_PMIC_BQ25120A
+	bool "PMIC BQ25120a example"
+	default n
+	---help---
+		Enable the PMIC BQ25120a example
+
+if EXAMPLES_PMIC_BQ25120A
+
+config EXAMPLES_BQ2512X_PROGNAME
+	string "Program name"
+	default "bq25120a"
+	depends on BUILD_KERNEL
+	---help---
+		This is the name of the program that will be use when the NSH ELF
+		program is installed.
+
+config EXAMPLES_BQ25120A_PRIORITY
+	int "BQ25120A task priority"
+	default 100
+
+config EXAMPLES_BQ25120A_STACKSIZE
+	int "BQ25120A stack size"
+	default 2048
+
+endif

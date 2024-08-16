@@ -1,0 +1,88 @@
+############################################################################
+# net/nimble/host/Make.defs
+#
+#   Copyright (C) 2011-2012, 2016 Gregory Nutt. All rights reserved.
+#   Author: Gregory Nutt <gnutt@nuttx.org>
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in
+#    the documentation and/or other materials provided with the
+#    distribution.
+# 3. Neither the name NuttX nor the names of its contributors may be
+#    used to endorse or promote products derived from this software
+#    without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+# COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+# OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+# AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+# ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+#
+############################################################################
+
+ifeq ($(CONFIG_BLE_NIMBLE_HOST),y)
+
+# host/src
+NIMBLE_CSRCS += ble_att.c ble_att_clt.c ble_att_cmd.c ble_att_svr.c
+
+NIMBLE_CSRCS += ble_eddystone.c ble_gap.c ble_gattc.c ble_gatts.c ble_gatts_lcl.c ble_uuid.c
+
+NIMBLE_CSRCS += ble_hs_adv.c ble_hs.c ble_hs_conn.c ble_hs_hci.c ble_hs_hci_evt.c ble_hs_id.c ble_hs_mbuf.c ble_hs_pvcy.c ble_hs_atomic.c 
+
+NIMBLE_CSRCS += ble_hs_cfg.c ble_hs_dbg.c ble_hs_hci_cmd.c ble_hs_hci_util.c ble_hs_log.c ble_hs_misc.c ble_hs_startup.c ble_hs_flow.c ble_hs_mqueue.c ble_hs_shutdown.c ble_hs_stop.c
+
+NIMBLE_CSRCS += ble_ibeacon.c ble_l2cap.c ble_l2cap_coc.c ble_l2cap_sig.c ble_l2cap_sig_cmd.c
+
+NIMBLE_CSRCS += ble_monitor.c ble_sm_alg.c ble_sm.c ble_sm_cmd.c ble_sm_lgcy.c ble_sm_sc.c ble_store.c ble_store_util.c
+
+# host/store
+NIMBLE_CSRCS += ble_store_config.c ble_store_config_conf.c ble_store_ram.c
+
+# host/util
+NIMBLE_CSRCS += addr.c
+
+ifeq ($(CONFIG_BLE_NIMBLE_HOST_MESH_SUPPORT),y)
+# host/mesh
+NIMBLE_CSRCS += access.c adv.c beacon.c crypto.c friend.c glue.c lpn.c mesh.c net.c prov.c proxy.c transport.c cfg_srv.c  health_srv.c   model_srv.c  cfg_cli.c  health_cli.c  light_model.c  model_cli.c  settings.c
+#NIMBLE_CSRCS += shell.c  testing.c
+endif
+
+#include ble services
+include host$(DELIM)services$(DELIM)Make.defs
+
+
+DEPPATH += --dep-path host$(DELIM)src
+DEPPATH += --dep-path host$(DELIM)util$(DELIM)src
+DEPPATH += --dep-path host$(DELIM)store$(DELIM)config$(DELIM)src
+DEPPATH += --dep-path host$(DELIM)store$(DELIM)ram$(DELIM)src
+DEPPATH += --dep-path host$(DELIM)mesh$(DELIM)src
+
+VPATH += : host$(DELIM)src
+VPATH += : host$(DELIM)util$(DELIM)src
+VPATH += : host$(DELIM)store$(DELIM)config$(DELIM)src
+VPATH += : host$(DELIM)store$(DELIM)ram$(DELIM)src
+VPATH += : host$(DELIM)mesh$(DELIM)src
+
+#CFLAGS += -I$(TOPDIR)$(DELIM)external$(DELIM)nimble$(DELIM)host$(DELIM)src
+#CFLAGS += -I$(TOPDIR)$(DELIM)external$(DELIM)nimble$(DELIM)host$(DELIM)util$(DELIM)src
+#CFLAGS += -I$(TOPDIR)$(DELIM)external$(DELIM)nimble$(DELIM)host$(DELIM)store$(DELIM)config$(DELIM)src
+CFLAGS += -I$(TOPDIR)$(DELIM)external$(DELIM)nimble$(DELIM)host$(DELIM)store$(DELIM)config$(DELIM)include
+
+#CFLAGS += -I$(TOPDIR)$(DELIM)external$(DELIM)nimble$(DELIM)host$(DELIM)store$(DELIM)ram$(DELIM)src
+CFLAGS += -I$(TOPDIR)$(DELIM)external$(DELIM)nimble$(DELIM)host$(DELIM)store$(DELIM)ram$(DELIM)include
+
+#CFLAGS += -I$(TOPDIR)$(DELIM)external$(DELIM)nimble$(DELIM)host$(DELIM)mesh$(DELIM)src
+endif

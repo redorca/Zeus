@@ -1,0 +1,51 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+if BLE_NIMBLE_TRANSPORT
+
+#Current nimble support 4 transport ways
+
+#1. emspi support
+config BLE_NIMBLE_TRANSPORT_SPI
+	bool "Mynewt nimble transport with SPI interface Support"
+	default n
+
+if BLE_NIMBLE_TRANSPORT_SPI
+	#source transport/emspi/Kconfig
+endif # BLE_NIMBLE_TRANSPORT_SPI
+################################################################################
+
+#2. ram support
+config BLE_NIMBLE_TRANSPORT_RAM
+	bool "Mynewt nimble transport with RAM interface Support"
+	default n
+
+if BLE_NIMBLE_TRANSPORT_RAM
+	#source transport/ram/Kconfig
+endif # BLE_NIMBLE_TRANSPORT_RAM
+################################################################################
+
+#3. socket support
+config BLE_NIMBLE_TRANSPORT_SOCKET
+	bool "Mynewt nimble transport with socket interface Support"
+	default n
+
+if BLE_NIMBLE_TRANSPORT_SOCKET
+	#source transport/socket/Kconfig
+endif # BLE_NIMBLE_TRANSPORT_SOCKET
+################################################################################
+
+#4. uart support
+config BLE_NIMBLE_TRANSPORT_UART
+	bool "Mynewt nimble transport with UART interface Support"
+	default n
+
+if BLE_NIMBLE_TRANSPORT_UART
+	#source transport/uart/Kconfig
+endif # BLE_NIMBLE_TRANSPORT_UART
+################################################################################
+
+
+endif # BLE_NIMBLE_TRANSPORT

@@ -1,0 +1,55 @@
+#
+# For a description of the syntax of this configuration file,
+# see misc/tools/kconfig-language.txt.
+#
+
+# this module is only for nordic bluetooth
+# so , it will depend on NRF52_BLUETOOTH
+
+if WIRELESS_BT && NRF52_BLUETOOTH
+
+config BT_NRF
+	bool "NRF bluetooth feature"
+	default y
+	depends on NRF52_BLUETOOTH
+	---help---
+		NRF bluetooth feature
+
+config BLE_APP_ADV_DEVICE_NAME
+	string "App advertising device name"
+	default "ZG_BLE_APP"
+
+config BLE_APP_ADV_MANUFACTURER_NAME
+	string "App advertising manufacturer name"
+	default "ZGLUE"
+
+config BLE_APP_ADV_INTERVAL
+	int "Units of slot(625us)"
+	default 100
+
+config BLE_APP_ADV_TIMEOUT
+	int "Units of seconds, 0 means no timeout"
+	default 0
+
+config BLE_APP_ADV_TYPE
+	int "App advertising type"
+	default 0
+
+config BLE_APP_PPCP_MIN_INTERVAL
+	int "Set peripheral preferred minimum connection interval"
+	default 6
+
+config BLE_APP_PPCP_MAX_INTERVAL
+	int "Set peripheral preferred maximum connection interval"
+	default 3200
+
+config BLE_APP_PPCP_SLAVE_LATENCY
+	int "Set peripheral preferred slave latency"
+	default 0
+
+config BLE_APP_CONN_SUP_TIMEOUT
+	int "Set peripheral preferred connection timeout, default 3min"
+	default 1800
+
+endif
+

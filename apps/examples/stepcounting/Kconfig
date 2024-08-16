@@ -1,0 +1,21 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+config EXAMPLES_STEP
+	bool "step counting"
+	default n
+	---help---
+		step counting example based on accelerometer
+
+if EXAMPLES_STEP
+
+config EXAMPLES_ACCR_DEVPATH
+	string "accelerometer device path"
+	default "/dev/accel0"
+	---help---
+		The default path to the accelerometer device. Default: /dev/accel0
+
+
+endif

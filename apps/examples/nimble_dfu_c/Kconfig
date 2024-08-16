@@ -1,0 +1,21 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+config EXAMPLES_NIMBLE_DFU_C
+	bool "Nimble DFU_C example"
+	default n
+	---help---
+		Enable the Nimble DFU_C example
+
+if EXAMPLES_NIMBLE_DFU_C
+
+config EXAMPLES_NIMBLE_DFU_C_PROGNAME
+	string "Program name"
+	default "Nimble DFU_C"
+	---help---
+		This is the name of the program that will be use when the Nimble DFU_C ELF
+		program is installed.
+
+endif

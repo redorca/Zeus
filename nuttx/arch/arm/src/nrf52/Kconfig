@@ -1,0 +1,1774 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+if ARCH_CHIP_NRF52
+
+comment "NRF52 Configuration Options"
+
+choice
+	prompt "NRF52 Chip Selection"
+	default ARCH_CHIP_NRF52832
+	depends on ARCH_CHIP_NRF52
+
+config ARCH_CHIP_NRF52832
+	bool "NRF52832"
+	select NRF52_NRF52832
+	select NRF52832_FLASH_512KB
+	select NRF52_NRF52832_HAVE_PERIPH
+	---help---
+		NRF52 Cortex M4F, 512 Kb FLASH, 64 Kb SRAM
+
+config ARCH_CHIP_NRF52840
+	bool "NRF52840"
+	select NRF52_NRF52840
+	select NRF52832_FLASH_1024KB
+	select NRF52_NRF52840_HAVE_PERIPH
+	---help---
+		NRF52 Cortex M4F, 1042 KB FLASH, 256 Kb SRAM
+
+
+endchoice # NRF52 Chip Selection
+
+# Chip families
+
+config NRF52_NRF52832_HAVE_PERIPH
+	bool
+	default n
+	select NRF52_HAVE_UART0
+	select NRF52_HAVE_LPTIM1
+	select NRF52_HAVE_LPTIM2
+	select NRF52_HAVE_COMP
+	select NRF52_HAVE_I2S
+	select NRF52_HAVE_BLUETOOTH
+	select NRF52_HAVE_RNG
+
+config NRF52_NRF52840_HAVE_PERIPH
+	bool
+	default n
+	select NRF52_HAVE_UART0
+	select NRF52_HAVE_UART1
+	select NRF52_HAVE_LPTIM1
+	select NRF52_HAVE_LPTIM2
+	select NRF52_HAVE_COMP
+	select NRF52_HAVE_I2S
+	select NRF52_HAVE_BLUETOOTH
+	select NRF52_HAVE_RNG
+
+choice
+	prompt "Embedded FLASH size"
+	default NRF52832_FLASH_512KB if ARCH_CHIP_NRF52832
+	default NRF52840_FLASH_1024KB if ARCH_CHIP_NRF52840
+
+config NRF52832_FLASH_256KB
+	bool "256 KB"
+	depends on !ARCH_CHIP_NRF52840
+
+config NRF52832_FLASH_512KB
+	bool "512 KB"
+	depends on !ARCH_CHIP_NRF52840
+
+config NRF52840_FLASH_1024KB
+	bool "1024 KB"
+	depends on ARCH_CHIP_NRF52840
+
+endchoice # Embedded FLASH size
+
+comment "NRF52 Peripherals"
+
+menu "NRF52 Peripheral Support"
+
+# These "hidden" settings determine if a peripheral option is available for the
+# selected MCU
+
+
+config NRF52_HAVE_LPTIM1
+	bool
+	default n
+
+config NRF52_HAVE_LPTIM2
+	bool
+	default n
+
+config NRF52_HAVE_COMP
+	bool
+	default n
+
+config NRF52_HAVE_I2S
+	bool
+	default n
+
+config NRF52_HAVE_UART0
+	bool
+	default n
+
+config NRF52_HAVE_BLUETOOTH
+	bool
+	default n
+
+config NRF52_HAVE_RNG
+	bool
+	default n
+
+config NRF52_BLUETOOTH
+	bool "Bluetooth"
+	default n
+	depends on NRF52_HAVE_BLUETOOTH
+	select WIRELESS_BT
+
+if NRF52_BLUETOOTH
+menu "Nordic Bluetooth Settings"
+
+choice
+	prompt "Nordic softdevice"
+	default NRF_SOFTDEVICE_S132_V5_0_0_1 if ARCH_CHIP_NRF52832
+	default NRF_SOFTDEVICE_S140_V5_0_0_1 if ARCH_CHIP_NRF52840
+
+config NRF_SOFTDEVICE_S132_V4_0_2
+	bool "Version 4.0.2 of S132 softdevice."
+	depends on ARCH_CHIP_NRF52832
+
+config NRF_SOFTDEVICE_S132_V5_0_0_1
+	bool "Version 5.0.0-1 of s132 softdevice"
+	depends on ARCH_CHIP_NRF52832
+
+config NRF_SOFTDEVICE_S140_V5_0_0_1
+	bool "Version 5.0.0-1 of s140 softdevice"
+	depends on ARCH_CHIP_NRF52840
+
+endchoice
+
+config NRF_SOFTDEVICE
+	string
+	default "s140_nrf52840_5.0.0-1.alpha" if NRF_SOFTDEVICE_S140_V5_0_0_1
+	default "s132_nrf52_5.0.0-1.alpha"    if NRF_SOFTDEVICE_S132_V5_0_0_1
+	default "s132_nrf52_4.0.2"	      if NRF_SOFTDEVICE_S132_V4_0_2
+	---help---
+		Contains the string identifier for the Bluetooth
+		softdevice driver to use.
+
+config BLE_GATT_MTU_SIZE_DEFAULT
+	int "GATT MTU default"
+	default 23
+	---help---
+	        Set the MTU defalt for GATT
+
+config NRF_SD_BLE_API_VERSION
+	int "BLE API version"
+	default 4
+	---help---
+	        API version
+
+config BLE__STACK_SIZE
+	int "BLE stack size."
+	default 2048
+	---help---
+	        Blah
+
+config BLE__HEAP_SIZE
+	int "The BLE heap"
+	default 1024
+	---help---
+		Blah
+
+endmenu
+endif
+
+config GPIO_AS_PINRESET
+	bool "GPIO reset pin feature"
+	default y
+	---help---
+	      GPIO 21 corresponds to reset.
+
+config NFCT_PINS_AS_GPIOS
+        bool "NFC pin as GPIO function"
+        default n
+        ---help---
+             NFC antenna pin as GPIO function.
+
+config FLASH_ORIGIN
+	hex	"Image Start Address"
+	default 0x0            if !NRF52_BLUETOOTH
+	default 0x1f000      if  NRF_SOFTDEVICE_S132_V4_0_2
+	default 0x20000      if  NRF_SOFTDEVICE_S132_V5_0_0_1
+	default 0x21000      if  NRF_SOFTDEVICE_S140_V5_0_0_1
+
+config FLASH_LENGTH
+	hex	"Image Length"
+	default 0x80000      if !NRF52_BLUETOOTH && ARCH_CHIP_NRF52832
+	default 0x100000     if !NRF52_BLUETOOTH && ARCH_CHIP_NRF52840
+	default 0x61000      if  NRF_SOFTDEVICE_S132_V4_0_2
+	default 0x60000      if  NRF_SOFTDEVICE_S132_V5_0_0_1
+	default 0xDF000      if  NRF_SOFTDEVICE_S140_V5_0_0_1
+
+config SRAM_ORIGIN
+	hex
+	default 0x20000000   if !NRF52_BLUETOOTH
+	default 0x20002558   if  NRF_SOFTDEVICE_S132_V4_0_2
+	default 0x20002168   if  NRF_SOFTDEVICE_S132_V5_0_0_1
+	default 0x20002168   if  NRF_SOFTDEVICE_S140_V5_0_0_1
+
+config SRAM_LENGTH
+	hex
+	default 0x10000      if !NRF52_BLUETOOTH && ARCH_CHIP_NRF52832
+	default 0x40000      if !NRF52_BLUETOOTH && ARCH_CHIP_NRF52840
+	default 0xdaa8       if  NRF_SOFTDEVICE_S132_V4_0_2
+	default 0xde98       if  NRF_SOFTDEVICE_S132_V5_0_0_1
+	default 0x3DE98      if  NRF_SOFTDEVICE_S140_V5_0_0_1
+
+# These "hidden" settings are the OR of individual peripheral selections
+# indicating that the general capability is required.
+
+
+config NRF52_I2C
+	bool
+	default n
+
+config NRF52_I2CS
+	bool
+	default n
+
+config NRF52_GPIOTE
+	bool
+	default n
+
+config NRF52_SPI
+	bool
+	default n
+
+config NRF52_UART
+	bool
+	default n
+
+config NRF52_RTC
+	bool
+	default n
+
+config NRF52_LPTIM
+	bool
+	default n
+
+# These are the peripheral selections proper
+
+# comment "AHB1 Peripherals"
+
+config NRF52_JTAG
+	bool "JTAG"
+	default n
+        depends on ARCH_HAVE_JTAG
+        select ARCH_JTAG
+
+config NRF52_ADC
+	bool "ADC"
+	default n
+
+config NRF52_ADC_CHANNEL
+	int "active adc channel number"
+	default 1
+	range 1 8
+	depends on NRF52_ADC
+
+config NRF52_COMP
+	bool "COMP"
+	default n
+
+config NRF52_LPCOMP
+	bool "LPCOMP"
+	default n
+
+config NRF52_PDM
+	bool "PDM"
+	default n
+
+
+config NRF52_CRC
+	bool "CRC"
+	default n
+
+# comment "AHB2 Peripherals"
+
+
+config NRF52_GPIOTE
+	bool "GPIOTE"
+	default n
+	---help---
+		The GPIO tasks and events (GPIOTE) module provides functionality for
+		accessing GPIO pins using tasks and events. Each GPIOTE channel can be
+		assigned to one pin.
+
+		A GPIOTE block enables GPIOs to generate events on pin state change which
+		can be used to carry out tasks through the PPI system. A GPIO can also be
+		driven to change state on system events using the PPI system.
+
+config NRF52_PPI
+	bool "PPI"
+	default n
+	---help---
+		The Programmable peripheral interconnect (PPI) enables peripherals to
+		interact autonomously with each other using tasks and events independent
+		of the CPU. The PPI allows precise synchronization between
+		peripherals when real-time application constraints exist and eliminates
+		the need for CPU activity to implement behavior which can be predefined using PPI.
+
+config NRF52_AES
+	bool "AES"
+	default n
+
+config NRF52_RNG
+	bool "RNG"
+	default n
+	depends on NRF52_HAVE_RNG
+	select ARCH_HAVE_RNG
+        ---help---
+                Random Number Generator: Generate random bytes, when enabled, until
+                disabled.  A bias correction may be applied to the data to ensure
+                an even distribution of '1's versus '0's.
+
+                Don't forget to select the random or urandom device.
+
+
+config NRF52_I2S
+	bool "I2S"
+	default n
+	select AUDIO
+	select I2S
+
+config NRF52_PWR
+	bool "PWR"
+	default n
+
+config NRF52_TIM0
+	bool "TIM0"
+	default n
+	depends on !NRF52_BLUETOOTH
+
+config NRF52_TIM1
+	bool "TIM1"
+	default n
+
+config NRF52_TIM2
+	bool "TIM2"
+	default n
+
+config NRF52_TIM3
+	bool "TIM3"
+	default n
+
+config NRF52_TIM4
+	bool "TIM4"
+	default n
+
+if RTC
+config NRF52_EXPAND_RTC_COMMENT
+	bool
+	default n
+
+config NRF52_RTC0
+	bool "RTC0"
+	default n
+	depends on !NRF52_BLUETOOTH
+        select NRF52_EXPAND_RTC_COMMENT
+	select NRF52_RTC
+
+config NRF52_RTC1
+        bool "RTC1"
+        default n
+        select NRF52_EXPAND_RTC_COMMENT
+	select NRF52_RTC
+
+config NRF52_RTC2
+        bool "RTC2"
+        default n
+        select NRF52_EXPAND_RTC_COMMENT
+	select NRF52_RTC
+
+        comment "Clock Controller configuration is in System Type menu."
+        depends on ARCH_CHIP_NRF52832 && NRF52_EXPAND_RTC_COMMENT
+endif # RTC
+
+config NRF52_SPI0
+	bool "SPI0"
+	default n
+	select SPI
+	select NRF52_SPI
+
+config NRF52_SPI1
+	bool "SPI1"
+	default n
+	select SPI
+	select NRF52_SPI
+
+config NRF52_SPI2
+	bool "SPI2"
+	default n
+	select SPI
+	select NRF52_SPI
+
+config NRF52_QSPI
+	bool "QSPI"
+	default n
+	depends on ARCH_CHIP_NRF52840
+
+config NRF52_UART0
+	bool "UART0"
+	default n
+	depends on NRF52_HAVE_UART0
+	select ARCH_HAVE_SERIAL_TERMIOS
+	select UART0_SERIALDRIVER
+	select NRF52_UART
+
+config NRF52_UART1
+	bool "UART1"
+	default n
+	depends on NRF52_HAVE_UART1
+	select ARCH_HAVE_SERIAL_TERMIOS
+	select UART1_SERIALDRIVER
+	select NRF52_UART
+
+config NRF52_I2C0
+	bool "I2C0"
+	default n
+	depends on !NRF52_SPI0
+	select NRF52_I2C
+
+config NRF52_I2C1
+	bool "I2C1"
+	default n
+	depends on !NRF52_SPI1
+	select NRF52_I2C
+
+config NRF52_I2CS0
+	bool "I2C0_SLAVE"
+	default n
+	depends on !NRF52_I2C0 && !NRF52_SPI0
+	select NRF52_I2CS
+
+config NRF52_I2CS1
+	bool "I2C1_SLAVE"
+	default n
+	depends on !NRF52_I2C1 && !NRF52_SPI1
+	select NRF52_I2CS
+
+config NRF52_LPTIM1
+	bool "LPTIM1"
+	default n
+	select NRF52_LPTIM
+	depends on NRF52_HAVE_LPTIM1
+
+config NRF52_SWPMI
+	bool "SWPMI"
+	default n
+
+config NRF52_LPTIM2
+	bool "LPTIM2"
+	default n
+	select NRF52_LPTIM
+	depends on NRF52_HAVE_LPTIM2
+
+config NRF52_DFSDM
+	bool "DFSDM"
+	default n
+
+# comment "Other Peripherals"
+
+config NRF52_PWM
+	bool "PWM"
+	default n
+	select PWM
+	select ARCH_HAVE_PWM_MULTICHAN
+
+config NRF52_WDG
+	bool "Watchdog (WDT)"
+	default n
+	select WATCHDOG
+
+config NRF52_QDECODER
+	bool "QDEC (quadrature decoder)"
+	default n
+    select QDECODER
+
+config NRF52_USBD
+    bool  "USBD (usb device controller)"
+    default n
+    depends on ARCH_CHIP_NRF52840
+    select USBDEV
+
+endmenu
+
+config NRF52_FLASH_PREFETCH
+	bool "Enable FLASH Pre-fetch"
+	default y
+	---help---
+	Enable FLASH prefetch
+
+config NRF52_PROGMEM
+	bool "FLASH program memory"
+	default y
+	select ARCH_HAVE_PROGMEM
+	---help---
+		Enable support FLASH interfaces as defined in include/nuttx/progmem.h
+
+config NRF52_PROCFS_DEVID
+	bool "Enable device id under procfs"
+	default n
+	depends on FS_PROCFS && FS_PROCFS_REGISTER
+
+config NRF52_DISABLE_IDLE_SLEEP_DURING_DEBUG
+	bool "Disable IDLE Sleep (WFI) in debug mode"
+	default n
+	---help---
+		In debug configuration, disables the WFI instruction in the IDLE loop
+		to prevent the JTAG from disconnecting.  With some JTAG debuggers, such
+		as the ST-LINK2 with OpenOCD, if the ARM is put to sleep via the WFI
+		instruction, the debugger will disconnect, terminating the debug session.
+
+choice
+	prompt "32.768K clock source"
+	default NRF52_LSCLK_XTAL_CLOCK
+	---help---
+		Selects the 32.768KHz clock configuration for the chip. The options include
+		1) internal RC(LFRC)
+		2) External XTAL(LFXO)
+		3) synthesized from HFCLK(LFSYNT)
+		4) External full swing to XL1 and XL2 grounded(SITIME style osciallator)
+
+		Please refer to Table 25 in the nrf52832 chip datasheet for more info
+
+config NRF52_LSCLK_RC_CLOCK
+	bool "RC clock"
+	---help---
+		Drive the RTC with the RC clock
+
+config NRF52_LSCLK_XTAL_CLOCK
+	bool "XTAL clock"
+	---help---
+		Drive the RTC with the Crypstal clock
+
+config NRF52_LSCLK_HS_CLOCK
+	bool "HSE clock"
+	---help---
+		Drive the RTC with the HSE clock, divided down to 32.768KHz.
+
+config NRF52_LSCLK_XTAL_FULL_SWING
+	bool "XTAL clock with full swing to XL1 and XL2 grounded"
+	---help---
+		Drive the RTC with the Full swing oscillator to XL1 and
+		leave XL2 grounded
+
+endchoice
+
+
+menu "Timer Configuration"
+
+if SCHED_TICKLESS
+
+config NRF52_ONESHOT
+	bool
+	default y
+	depends on NRF52_RTC
+
+config NRF52_FREERUN
+	bool
+	default y
+
+config NRF52_TICKLESS_ONESHOT
+	int "Tickless one-shot timer channel"
+	default 2
+	range 1 2
+	depends on NRF52_ONESHOT
+	---help---
+		If the Tickless OS feature is enabled, then one clock must be
+		assigned to provide the one-shot timer needed by the OS,
+		it is RTC2 now.
+
+endif # SCHED_TICKLESS
+
+if !SCHED_TICKLESS
+
+config NRF52_ONESHOT
+	bool "TIM one-shot wrapper"
+	default n
+	---help---
+		Enable a wrapper around the low level timer/counter functions to
+		support one-shot timer.
+
+config NRF52_FREERUN
+	bool "TIM free-running wrapper"
+	default n
+	---help---
+		Enable a wrapper around the low level timer/counter functions to
+		support a free-running timer.
+
+endif # !SCHED_TICKLESS
+
+config NRF52_ONESHOT_MAXTIMERS
+	int "Maximum number of oneshot timers"
+	default 1
+	range 1 8
+	depends on NRF52_ONESHOT
+	---help---
+		Determines the maximum number of oneshot timers that can be
+		supported.  This setting pre-allocates some minimal support for each
+		of the timers and places an upper limit on the number of oneshot
+		timers that you can use.
+
+config NRF52_TIM1_PWM
+	bool "TIM1 PWM"
+	default n
+	depends on NRF52_TIM1
+	select PWM
+	select ARCH_HAVE_PWM_PULSECOUNT
+	---help---
+		Reserve timer 1 for use by PWM
+
+		Timer devices may be used for different purposes.  One special purpose is
+		to generate modulated outputs for such things as motor control.  If NRF52_TIM1
+		is defined then THIS following may also be defined to indicate that
+		the timer is intended to be used for pulsed output modulation.
+
+if NRF52_TIM1_PWM
+
+config NRF52_TIM1_MODE
+	int "TIM1 Mode"
+	default 0
+	range 0 4
+	---help---
+		Specifies the timer mode.
+
+if NRF52_PWM_MULTICHAN
+
+config NRF52_TIM1_CHANNEL1
+	bool "TIM1 Channel 1"
+	default n
+	---help---
+		Enables channel 1.
+
+if NRF52_TIM1_CHANNEL1
+
+config NRF52_TIM1_CH1MODE
+	int "TIM1 Channel 1 Mode"
+	default 0
+	range 0 5
+	---help---
+		Specifies the channel mode.
+
+config NRF52_TIM1_CH1OUT
+	bool "TIM1 Channel 1 Output"
+	default n
+	---help---
+		Enables channel 1 output.
+
+config NRF52_TIM1_CH1NOUT
+	bool "TIM1 Channel 1 Complementary Output"
+	default n
+	depends on NRF52_TIM1_CH1OUT
+	---help---
+		Enables channel 1 complementary output.
+
+endif # NRF52_TIM1_CHANNEL1
+
+config NRF52_TIM1_CHANNEL2
+	bool "TIM1 Channel 2"
+	default n
+	---help---
+		Enables channel 2.
+
+if NRF52_TIM1_CHANNEL2
+
+config NRF52_TIM1_CH2MODE
+	int "TIM1 Channel 2 Mode"
+	default 0
+	range 0 5
+	---help---
+		Specifies the channel mode.
+
+config NRF52_TIM1_CH2OUT
+	bool "TIM1 Channel 2 Output"
+	default n
+	---help---
+		Enables channel 2 output.
+
+config NRF52_TIM1_CH2NOUT
+	bool "TIM1 Channel 2 Complemenrary Output"
+	default n
+	depends on NRF52_TIM1_CH2OUT
+	---help---
+		Enables channel 2 complementary output.
+
+endif # NRF52_TIM1_CHANNEL2
+
+config NRF52_TIM1_CHANNEL3
+	bool "TIM1 Channel 3"
+	default n
+	---help---
+		Enables channel 3.
+
+if NRF52_TIM1_CHANNEL3
+
+config NRF52_TIM1_CH3MODE
+	int "TIM1 Channel 3 Mode"
+	default 0
+	range 0 5
+	---help---
+		Specifies the channel mode.
+
+config NRF52_TIM1_CH3OUT
+	bool "TIM1 Channel 3 Output"
+	default n
+	---help---
+		Enables channel 3 output.
+
+config NRF52_TIM1_CH3NOUT
+	bool "TIM1 Channel 3 Complementary Output"
+	default n
+	depends on NRF52_TIM1_CH3OUT
+	---help---
+		Enables channel 3 complementary output.
+
+endif # NRF52_TIM1_CHANNEL3
+
+config NRF52_TIM1_CHANNEL4
+	bool "TIM1 Channel 4"
+	default n
+	---help---
+		Enables channel 4.
+
+if NRF52_TIM1_CHANNEL4
+
+config NRF52_TIM1_CH4MODE
+	int "TIM1 Channel 4 Mode"
+	default 0
+	range 0 5
+	---help---
+		Specifies the channel mode.
+
+config NRF52_TIM1_CH4OUT
+	bool "TIM1 Channel 4 Output"
+	default n
+	---help---
+		Enables channel 4 output.
+
+endif # NRF52_TIM1_CHANNEL4
+
+endif # NRF52_PWM_MULTICHAN
+
+if !NRF52_PWM_MULTICHAN
+
+config NRF52_TIM1_CHANNEL
+	int "TIM1 PWM Output Channel"
+	default 1
+	range 1 4
+	---help---
+		If TIM1 is enabled for PWM usage, you also need specifies the timer output
+		channel {1,..,4}
+
+config NRF52_TIM1_CHMODE
+	int "TIM1 Channel Mode"
+	default 0
+	range 0 5
+	---help---
+		Specifies the channel mode.
+
+endif # !NRF52_PWM_MULTICHAN
+
+endif # NRF52_TIM1_PWM
+
+config NRF52_TIM2_PWM
+	bool "TIM2 PWM"
+	default n
+	depends on NRF52_TIM2
+	select PWM
+	select ARCH_HAVE_PWM_PULSECOUNT
+	---help---
+		Reserve timer 2 for use by PWM
+
+		Timer devices may be used for different purposes.  One special purpose is
+		to generate modulated outputs for such things as motor control.  If NRF52_TIM2
+		is defined then THIS following may also be defined to indicate that
+		the timer is intended to be used for pulsed output modulation.
+
+if NRF52_TIM2_PWM
+
+config NRF52_TIM2_MODE
+	int "TIM2 Mode"
+	default 0
+	range 0 4
+	---help---
+		Specifies the timer mode.
+
+if NRF52_PWM_MULTICHAN
+
+config NRF52_TIM2_CHANNEL1
+	bool "TIM2 Channel 1"
+	default n
+	---help---
+		Enables channel 1.
+
+if NRF52_TIM2_CHANNEL1
+
+config NRF52_TIM2_CH1MODE
+	int "TIM2 Channel 1 Mode"
+	default 0
+	range 0 5
+	---help---
+		Specifies the channel mode.
+
+config NRF52_TIM2_CH1OUT
+	bool "TIM2 Channel 1 Output"
+	default n
+	---help---
+		Enables channel 1 output.
+
+endif # NRF52_TIM2_CHANNEL1
+
+config NRF52_TIM2_CHANNEL2
+	bool "TIM2 Channel 2"
+	default n
+	---help---
+		Enables channel 2.
+
+if NRF52_TIM2_CHANNEL2
+
+config NRF52_TIM2_CH2MODE
+	int "TIM2 Channel 2 Mode"
+	default 0
+	range 0 5
+	---help---
+		Specifies the channel mode.
+
+config NRF52_TIM2_CH2OUT
+	bool "TIM2 Channel 2 Output"
+	default n
+	---help---
+		Enables channel 2 output.
+
+endif # NRF52_TIM2_CHANNEL2
+
+config NRF52_TIM2_CHANNEL3
+	bool "TIM2 Channel 3"
+	default n
+	---help---
+		Enables channel 3.
+
+if NRF52_TIM2_CHANNEL3
+
+config NRF52_TIM2_CH3MODE
+	int "TIM2 Channel 3 Mode"
+	default 0
+	range 0 5
+	---help---
+		Specifies the channel mode.
+
+config NRF52_TIM2_CH3OUT
+	bool "TIM2 Channel 3 Output"
+	default n
+	---help---
+		Enables channel 3 output.
+
+endif # NRF52_TIM2_CHANNEL3
+
+config NRF52_TIM2_CHANNEL4
+	bool "TIM2 Channel 4"
+	default n
+	---help---
+		Enables channel 4.
+
+if NRF52_TIM2_CHANNEL4
+
+config NRF52_TIM2_CH4MODE
+	int "TIM2 Channel 4 Mode"
+	default 0
+	range 0 5
+	---help---
+		Specifies the channel mode.
+
+config NRF52_TIM2_CH4OUT
+	bool "TIM2 Channel 4 Output"
+	default n
+	---help---
+		Enables channel 4 output.
+
+endif # NRF52_TIM2_CHANNEL4
+
+endif # NRF52_PWM_MULTICHAN
+
+if !NRF52_PWM_MULTICHAN
+
+config NRF52_TIM2_CHANNEL
+	int "TIM2 PWM Output Channel"
+	default 1
+	range 1 4
+	---help---
+		If TIM2 is enabled for PWM usage, you also need specifies the timer output
+		channel {1,..,4}
+
+config NRF52_TIM2_CHMODE
+	int "TIM2 Channel Mode"
+	default 0
+	range 0 5
+	---help---
+		Specifies the channel mode.
+
+endif # !NRF52_PWM_MULTICHAN
+
+endif # NRF52_TIM2_PWM
+
+config NRF52_TIM3_PWM
+	bool "TIM3 PWM"
+	default n
+	depends on NRF52_TIM3
+	select PWM
+	select ARCH_HAVE_PWM_PULSECOUNT
+	---help---
+		Reserve timer 3 for use by PWM
+
+		Timer devices may be used for different purposes.  One special purpose is
+		to generate modulated outputs for such things as motor control.  If NRF52_TIM3
+		is defined then THIS following may also be defined to indicate that
+		the timer is intended to be used for pulsed output modulation.
+
+if NRF52_TIM3_PWM
+
+config NRF52_TIM3_MODE
+	int "TIM3 Mode"
+	default 0
+	range 0 4
+	---help---
+		Specifies the timer mode.
+
+if NRF52_PWM_MULTICHAN
+
+config NRF52_TIM3_CHANNEL1
+	bool "TIM3 Channel 1"
+	default n
+	---help---
+		Enables channel 1.
+
+if NRF52_TIM3_CHANNEL1
+
+config NRF52_TIM3_CH1MODE
+	int "TIM3 Channel 1 Mode"
+	default 0
+	range 0 5
+	---help---
+		Specifies the channel mode.
+
+config NRF52_TIM3_CH1OUT
+	bool "TIM3 Channel 1 Output"
+	default n
+	---help---
+		Enables channel 1 output.
+
+endif # NRF52_TIM3_CHANNEL1
+
+config NRF52_TIM3_CHANNEL2
+	bool "TIM3 Channel 2"
+	default n
+	---help---
+		Enables channel 2.
+
+if NRF52_TIM3_CHANNEL2
+
+config NRF52_TIM3_CH2MODE
+	int "TIM3 Channel 2 Mode"
+	default 0
+	range 0 5
+	---help---
+		Specifies the channel mode.
+
+config NRF52_TIM3_CH2OUT
+	bool "TIM3 Channel 2 Output"
+	default n
+	---help---
+		Enables channel 2 output.
+
+endif # NRF52_TIM3_CHANNEL2
+
+config NRF52_TIM3_CHANNEL3
+	bool "TIM3 Channel 3"
+	default n
+	---help---
+		Enables channel 3.
+
+if NRF52_TIM3_CHANNEL3
+
+config NRF52_TIM3_CH3MODE
+	int "TIM3 Channel 3 Mode"
+	default 0
+	range 0 5
+	---help---
+		Specifies the channel mode.
+
+config NRF52_TIM3_CH3OUT
+	bool "TIM3 Channel 3 Output"
+	default n
+	---help---
+		Enables channel 3 output.
+
+endif # NRF52_TIM3_CHANNEL3
+
+config NRF52_TIM3_CHANNEL4
+	bool "TIM3 Channel 4"
+	default n
+	---help---
+		Enables channel 4.
+
+if NRF52_TIM3_CHANNEL4
+
+config NRF52_TIM3_CH4MODE
+	int "TIM3 Channel 4 Mode"
+	default 0
+	range 0 5
+	---help---
+		Specifies the channel mode.
+
+config NRF52_TIM3_CH4OUT
+	bool "TIM3 Channel 4 Output"
+	default n
+	---help---
+		Enables channel 4 output.
+
+endif # NRF52_TIM3_CHANNEL4
+
+endif # NRF52_PWM_MULTICHAN
+
+if !NRF52_PWM_MULTICHAN
+
+config NRF52_TIM3_CHANNEL
+	int "TIM3 PWM Output Channel"
+	default 1
+	range 1 4
+	---help---
+		If TIM3 is enabled for PWM usage, you also need specifies the timer output
+		channel {1,..,4}
+
+config NRF52_TIM3_CHMODE
+	int "TIM3 Channel Mode"
+	default 0
+	range 0 5
+	---help---
+		Specifies the channel mode.
+
+endif # !NRF52_PWM_MULTICHAN
+
+endif # NRF52_TIM3_PWM
+
+config NRF52_TIM4_PWM
+	bool "TIM4 PWM"
+	default n
+	depends on NRF52_TIM4
+	select PWM
+	select ARCH_HAVE_PWM_PULSECOUNT
+	---help---
+		Reserve timer 4 for use by PWM
+
+		Timer devices may be used for different purposes.  One special purpose is
+		to generate modulated outputs for such things as motor control.  If NRF52_TIM4
+		is defined then THIS following may also be defined to indicate that
+		the timer is intended to be used for pulsed output modulation.
+
+if NRF52_TIM4_PWM
+
+config NRF52_TIM4_MODE
+	int "TIM4 Mode"
+	default 0
+	range 0 4
+	---help---
+		Specifies the timer mode.
+
+if NRF52_PWM_MULTICHAN
+
+config NRF52_TIM4_CHANNEL1
+	bool "TIM4 Channel 1"
+	default n
+	---help---
+		Enables channel 1.
+
+if NRF52_TIM4_CHANNEL1
+
+config NRF52_TIM4_CH1MODE
+	int "TIM4 Channel 1 Mode"
+	default 0
+	range 0 5
+	---help---
+		Specifies the channel mode.
+
+config NRF52_TIM4_CH1OUT
+	bool "TIM4 Channel 1 Output"
+	default n
+	---help---
+		Enables channel 1 output.
+
+endif # NRF52_TIM4_CHANNEL1
+
+config NRF52_TIM4_CHANNEL2
+	bool "TIM4 Channel 2"
+	default n
+	---help---
+		Enables channel 2.
+
+if NRF52_TIM4_CHANNEL2
+
+config NRF52_TIM4_CH2MODE
+	int "TIM4 Channel 2 Mode"
+	default 0
+	range 0 5
+	---help---
+		Specifies the channel mode.
+
+config NRF52_TIM4_CH2OUT
+	bool "TIM4 Channel 2 Output"
+	default n
+	---help---
+		Enables channel 2 output.
+
+endif # NRF52_TIM4_CHANNEL2
+
+config NRF52_TIM4_CHANNEL3
+	bool "TIM4 Channel 3"
+	default n
+	---help---
+		Enables channel 3.
+
+if NRF52_TIM4_CHANNEL3
+
+config NRF52_TIM4_CH3MODE
+	int "TIM4 Channel 3 Mode"
+	default 0
+	range 0 5
+	---help---
+		Specifies the channel mode.
+
+config NRF52_TIM4_CH3OUT
+	bool "TIM4 Channel 3 Output"
+	default n
+	---help---
+		Enables channel 3 output.
+
+endif # NRF52_TIM4_CHANNEL3
+
+config NRF52_TIM4_CHANNEL4
+	bool "TIM4 Channel 4"
+	default n
+	---help---
+		Enables channel 4.
+
+if NRF52_TIM4_CHANNEL4
+
+config NRF52_TIM4_CH4MODE
+	int "TIM4 Channel 4 Mode"
+	default 0
+	range 0 5
+	---help---
+		Specifies the channel mode.
+
+config NRF52_TIM4_CH4OUT
+	bool "TIM4 Channel 4 Output"
+	default n
+	---help---
+		Enables channel 4 output.
+
+endif # NRF52_TIM4_CHANNEL4
+
+endif # NRF52_PWM_MULTICHAN
+
+if !NRF52_PWM_MULTICHAN
+
+config NRF52_TIM4_CHANNEL
+	int "TIM4 PWM Output Channel"
+	default 1
+	range 1 4
+	---help---
+		If TIM4 is enabled for PWM usage, you also need specifies the timer output
+		channel {1,..,4}
+
+config NRF52_TIM4_CHMODE
+	int "TIM4 Channel Mode"
+	default 0
+	range 0 5
+	---help---
+		Specifies the channel mode.
+
+endif # !NRF52_PWM_MULTICHAN
+
+endif # NRF52_TIM4_PWM
+
+config NRF52_TIM0_PWM
+	bool "TIM0 PWM"
+	default n
+	depends on NRF52_TIM0
+	select PWM
+	select ARCH_HAVE_PWM_PULSECOUNT
+	---help---
+		Reserve timer 5 for use by PWM
+
+		Timer devices may be used for different purposes.  One special purpose is
+		to generate modulated outputs for such things as motor control.  If NRF52_TIM0
+		is defined then THIS following may also be defined to indicate that
+		the timer is intended to be used for pulsed output modulation.
+
+if NRF52_TIM5_PWM
+
+config NRF52_TIM0_MODE
+	int "TIM0 Mode"
+	default 0
+	range 0 4
+	---help---
+		Specifies the timer mode.
+
+if NRF52_PWM_MULTICHAN
+
+config NRF52_TIM0_CHANNEL1
+	bool "TIM0 Channel 1"
+	default n
+	---help---
+		Enables channel 1.
+
+if NRF52_TIM0_CHANNEL1
+
+config NRF52_TIM0_CH1MODE
+	int "TIM0 Channel 1 Mode"
+	default 0
+	range 0 5
+	---help---
+		Specifies the channel mode.
+
+config NRF52_TIM0_CH1OUT
+	bool "TIM0 Channel 1 Output"
+	default n
+	---help---
+		Enables channel 1 output.
+
+endif # NRF52_TIM0_CHANNEL1
+
+config NRF52_TIM0_CHANNEL2
+	bool "TIM0 Channel 2"
+	default n
+	---help---
+		Enables channel 2.
+
+if NRF52_TIM5_CHANNEL2
+
+config NRF52_TIM5_CH2MODE
+	int "TIM5 Channel 2 Mode"
+	default 0
+	range 0 5
+	---help---
+		Specifies the channel mode.
+
+config NRF52_TIM5_CH2OUT
+	bool "TIM5 Channel 2 Output"
+	default n
+	---help---
+		Enables channel 2 output.
+
+endif # NRF52_TIM5_CHANNEL2
+
+config NRF52_TIM5_CHANNEL3
+	bool "TIM5 Channel 3"
+	default n
+	---help---
+		Enables channel 3.
+
+if NRF52_TIM5_CHANNEL3
+
+config NRF52_TIM5_CH3MODE
+	int "TIM5 Channel 3 Mode"
+	default 0
+	range 0 5
+	---help---
+		Specifies the channel mode.
+
+config NRF52_TIM5_CH3OUT
+	bool "TIM5 Channel 3 Output"
+	default n
+	---help---
+		Enables channel 3 output.
+
+endif # NRF52_TIM5_CHANNEL3
+
+config NRF52_TIM5_CHANNEL4
+	bool "TIM5 Channel 4"
+	default n
+	---help---
+		Enables channel 4.
+
+if NRF52_TIM5_CHANNEL4
+
+config NRF52_TIM5_CH4MODE
+	int "TIM5 Channel 4 Mode"
+	default 0
+	range 0 5
+	---help---
+		Specifies the channel mode.
+
+config NRF52_TIM5_CH4OUT
+	bool "TIM5 Channel 4 Output"
+	default n
+	---help---
+		Enables channel 4 output.
+
+endif # NRF52_TIM5_CHANNEL4
+
+endif # NRF52_PWM_MULTICHAN
+
+if !NRF52_PWM_MULTICHAN
+
+config NRF52_TIM5_CHANNEL
+	int "TIM5 PWM Output Channel"
+	default 1
+	range 1 4
+	---help---
+		If TIM5 is enabled for PWM usage, you also need specifies the timer output
+		channel {1,..,4}
+
+config NRF52_TIM5_CHMODE
+	int "TIM5 Channel Mode"
+	default 0
+	range 0 5
+	---help---
+		Specifies the channel mode.
+
+endif # !NRF52_PWM_MULTICHAN
+
+endif # NRF52_TIM5_PWM
+
+config NRF52_PWM_MULTICHAN
+	bool "PWM Multiple Output Channels"
+	default n
+	depends on NRF52_TIM1_PWM || NRF52_TIM2_PWM || NRF52_TIM3_PWM || NRF52_TIM4_PWM || NRF52_TIM5_PWM
+	select ARCH_HAVE_PWM_MULTICHAN
+	---help---
+		Specifies that the PWM driver supports multiple output
+		channels per timer.
+
+config NRF52_TIM1_CAP
+	bool "TIM1 Capture"
+	default n
+	depends on NRF52_HAVE_TIM1
+	---help---
+		Reserve timer 1 for use by Capture
+
+		Timer devices may be used for different purposes.  One special purpose is
+		to capture input.
+
+config NRF52_TIM2_CAP
+	bool "TIM2 Capture"
+	default n
+	depends on NRF52_HAVE_TIM2
+	---help---
+		Reserve timer 2 for use by Capture
+
+		Timer devices may be used for different purposes.  One special purpose is
+		to capture input.
+
+config NRF52_TIM3_CAP
+	bool "TIM3 Capture"
+	default n
+	depends on NRF52_HAVE_TIM3
+	---help---
+		Reserve timer 3 for use by Capture
+
+		Timer devices may be used for different purposes.  One special purpose is
+		to capture input.
+
+config NRF52_TIM4_CAP
+	bool "TIM4 Capture"
+	default n
+	depends on NRF52_HAVE_TIM4
+	---help---
+		Reserve timer 4 for use by Capture
+
+		Timer devices may be used for different purposes.  One special purpose is
+		to capture input.
+
+config NRF52_TIM5_CAP
+	bool "TIM5 Capture"
+	default n
+	depends on NRF52_HAVE_TIM5
+	---help---
+		Reserve timer 5 for use by Capture
+
+		Timer devices may be used for different purposes.  One special purpose is
+		to capture input.
+
+endmenu # Timer Configuration
+
+if NRF52_PWM
+menu "PWM Configuration"
+
+config NRF52_PWM_M0
+	bool "Enable PWM module 0"
+	default n
+	---help---
+		module 0 of PWM hardware controller.
+
+if NRF52_PWM_M0
+
+config NRF52_PWM_M0_CLK_FREQUENCY
+	int "CLK frequency"
+	default 16000000
+	range 125000 16000000
+	---help---
+		The frequency of PWM , it is from 125K to 16M by step
+		(A' = A * 2) , like 125K , 250K to 16M.
+
+endif # NRF52_PWM_M0
+
+
+config NRF52_PWM_M1
+	bool "Enable PWM module 1"
+	default n
+
+if NRF52_PWM_M1
+
+config NRF52_PWM_M1_CLK_FREQUENCY
+	int "CLK frequency"
+	default 1000000
+	---help---
+		The frequency of PWM , it is from 125K to 16M by step
+		(A' = A * 2) , like 125K , 250K to 16M.
+
+endif # NRF52_PWM_M1
+
+config NRF52_PWM_M2
+	bool "Enable PWM module 2"
+	default n
+
+if NRF52_PWM_M2
+
+config NRF52_PWM_M2_CLK_FREQUENCY
+	int "CLK frequency"
+	default 1000000
+	---help---
+		The frequency of PWM , it is from 125K to 16M by step
+		(A' = A * 2) , like 125K , 250K to 16M.
+
+endif # NRF52_PWM_M2
+
+endmenu # PWM Configuration
+endif # NRF52_PWM
+
+
+config NRF52_HAVE_UART1
+	bool
+	default n
+
+
+menu "U[S]ART Configuration"
+	depends on NRF52_UART
+
+config UART0_RXDMA
+	bool "UART0 Rx DMA"
+	default n
+	depends on NRF52_UART0 && ( NRF52_DMA1 || NRF52_DMA2 )
+	---help---
+		In high data rate usage, Rx DMA may eliminate Rx overrun errors
+
+config SERIAL_DISABLE_REORDERING
+	bool "Disable reordering of ttySx devices."
+	depends on NRF52_UART0 || NRF52_UART1
+	default n
+	---help---
+		NuttX per default reorders the serial ports (/dev/ttySx) so
+                that the console is always on /dev/ttyS0. If more than one
+                UART is in use this can, however, have the side-effect that
+                all port mappings (hardware UART1 -> /dev/ttyS0) change if
+                the console is moved to another UART. This is in particular
+                relevant if a project uses the USB console in some configs
+                and a serial console in other configs, but does not want the
+                side effect of having all serial port names change when just
+		the console is moved from serial to USB.
+
+config NRF52_FLOWCONTROL_BROKEN
+	bool "Use Software UART RTS flow control"
+	depends on NRF52_UART
+	default n
+	---help---
+		Enable UART RTS flow control using Software. Because STM
+		Current STM32 have broken HW based RTS behavior (they assert
+		nRTS after every byte received)  Enable this setting workaround
+		this issue by useing software based management of RTS
+
+config NRF52_UART_BREAKS
+	bool "Add TIOxSBRK to support sending Breaks"
+	depends on NRF52_UART
+	default n
+	---help---
+		Add TIOCxBRK routines to send a line break per the STM32 manual,
+                the break will be a pulse based on the value M. This is not a
+                BSD compatible break.
+
+config NRF52_SERIALBRK_BSDCOMPAT
+	bool "Use GPIO To send Break"
+	depends on NRF52_UART && NRF52_UART_BREAKS
+	default n
+	---help---
+		Enable using GPIO on the TX pin to send a BSD compatible break:
+		TIOCSBRK will start the break and TIOCCBRK will end the break.
+		The current STM32 U[S]ARTS have no way to leave the break (TX=LOW)
+		on because the SW starts the break and then the HW automatically
+                clears the break. This makes it is difficult to sent a long break.
+
+endmenu # U[S]ART Configuration
+
+menu "JTAG Configuration"
+	depends on NRF52_JTAG
+
+
+config NRF52_JTAG_TMS_PIN
+	int "JTAG TMS Pin number"
+	range 0 31
+	default 13
+
+config NRF52_JTAG_TCK_PIN
+	int "JTAG TCK Pin number"
+	range 0 31
+	default 14
+
+config NRF52_JTAG_TDI_PIN
+	int "JTAG TDI Pin number"
+	range 0 31
+	default 12
+
+config NRF52_JTAG_TDO_PIN
+	int "JTAG TDO Pin number"
+	range 0 31
+	default 22
+
+endmenu
+
+menu "PDM Configuration"
+	depends on NRF52_PDM
+
+config CONFIG_NRF52_PDM_GAINL
+	int "Left output gain"
+	range 0 80
+	default 40
+	---help---
+		This value will set to GAINL register directly.Read the datasheet
+		and select a proper value.
+
+config CONFIG_NRF52_PDM_GAINR
+	int "Right output gain"
+	range 0 80
+	default 40
+	---help---
+		This value will set to GAINR register directly.Read the datasheet
+		and select a proper value.
+
+choice
+	prompt "sample which channel in Mono Mode"
+	default NRF52_PDM_MONO_SAMMPLE_LEFT
+	config NRF52_PDM_MONO_SAMMPLE_LEFT
+		bool "left"
+
+	config NRF52_PDM_MONO_SAMMPLE_RIGHT
+		bool "right"
+endchoice
+endmenu
+
+menu "I2S Configuration"
+	depends on NRF52_I2S
+
+choice
+        prompt "I2S mode"
+        default NRF52_I2S_MODE_MASTER
+        depends on NRF52_I2S
+
+config NRF52_I2S_MODE_MASTER
+        bool "master"
+        depends on NRF52_I2S
+
+config NRF52_I2S_MODE_SLAVE
+        bool "slave"
+        depends on NRF52_I2S
+
+endchoice
+
+choice
+        prompt "I2S formate"
+        default NRF52_I2S_FORMAT_ORIGINAL_I2S
+        depends on NRF52_I2S
+
+config NRF52_I2S_FORMAT_ORIGINAL_I2S
+        bool "original i2s formate"
+        depends on NRF52_I2S
+
+config NRF52_I2S_FORMAT_ALIGNED
+        bool "aligned mode"
+        depends on NRF52_I2S
+
+endchoice
+
+choice
+        prompt "I2S align"
+        default NRF52_I2S_ALIGN_LEFT
+        depends on NRF52_I2S_FORMAT_ALIGNED
+
+config NRF52_I2S_ALIGN_LEFT
+        bool "left aligned"
+        depends on NRF52_I2S_FORMAT_ALIGNED
+
+config NRF52_I2S_ALIGN_RIGHT
+        bool "right aligned"
+        depends on NRF52_I2S_FORMAT_ALIGNED
+
+endchoice
+
+config NRF52_I2S_MCK_OUTPUT
+	bool "MCK output enable"
+	default n
+	---help---
+		enable the MCK signal output
+endmenu
+
+
+menu "SPI Configuration"
+	depends on NRF52_SPI
+
+config NRF52_SPI_INTERRUPTS
+	bool "Interrupt driver SPI"
+	default n
+	---help---
+		Select to enable interrupt driven SPI support. Non-interrupt-
+                driven, poll-waiting is recommended if the interrupt rate would
+                be to high in the interrupt driven case.
+
+config NRF52_CS_CONTROL_BY_USER
+	bool "SPI CS select customization"
+	default n
+	---help---
+		User define customized cs
+
+
+endmenu
+
+menu "I2C Configuration"
+	depends on NRF52_I2C
+
+choice
+	prompt "I2C0 Clock Frequency"
+	default NRF52_I2C0_400K
+	depends on NRF52_I2C && NRF52_I2C0
+
+config NRF52_I2C0_100K
+	bool "100K"
+	---help---
+		I2C clock frequency of 100KHz
+
+config NRF52_I2C0_250K
+	bool "250K"
+	---help---
+		I2C clock frequency of 250KHz
+
+config NRF52_I2C0_400K
+	bool "400K"
+	---help---
+		I2C clock frequency of 400KHz
+
+endchoice
+
+
+choice
+	prompt "I2C1 Clock Frequency"
+	default NRF52_I2C1_400K
+	depends on NRF52_I2C && NRF52_I2C1
+
+config NRF52_I2C1_100K
+	bool "100K"
+	---help---
+		I2C clock frequency of 100KHz
+
+config NRF52_I2C1_250K
+	bool "250K"
+	---help---
+		I2C clock frequency of 250KHz
+
+config NRF52_I2C1_400K
+	bool "400K"
+	---help---
+		I2C clock frequency of 400KHz
+
+endchoice
+
+config NRF52_I2C_DYNTIMEO
+	bool "Use dynamic timeouts"
+	default n
+	depends on NRF52_I2C
+
+config NRF52_I2C_DYNTIMEO_USECPERBYTE
+	int "Timeout Microseconds per Byte"
+	default 500
+	depends on NRF52_I2C_DYNTIMEO
+
+config NRF52_I2C_DYNTIMEO_STARTSTOP
+	int "Timeout for Start/Stop (Milliseconds)"
+	default 1000
+	depends on NRF52_I2C_DYNTIMEO
+
+config NRF52_I2CTIMEOSEC
+	int "Timeout seconds"
+	default 0
+	depends on NRF52_I2C
+
+config NRF52_I2CTIMEOMS
+	int "Timeout Milliseconds"
+	default 500
+	depends on NRF52_I2C && !NRF52_I2C_DYNTIMEO
+
+config NRF52_I2CTIMEOTICKS
+	int "Timeout for Done and Stop (ticks)"
+	default 500
+	depends on NRF52_I2C && !NRF52_I2C_DYNTIMEO
+
+endmenu
+
+menu "QDecoder Configuration"
+	depends on QDECODER
+
+config NRF52_QDEC_PHASE_A
+	int "Phase A Pin Select"
+	default 9
+	range 0 31
+	---help---
+		Phase A pin for use by QDecoder.
+
+config NRF52_QDEC_PHASE_B
+	int "Phase B Pin Select"
+	default 10
+	range 0 31
+	---help---
+		Phase B pin for use by QDecoder.
+
+config NRF52_QDEC_LED
+    bool "LED output"
+    default y
+
+if NRF52_QDEC_LED
+config NRF52_QDEC_LED_PIN
+	int "LED Pin Select"
+	default 31
+	range 0 31
+	---help---
+		LED pin for use by QDecoder.
+
+choice
+	prompt "LED Output Active Level"
+	default NRF52_QDEC_LED_OUTPUT_ACTIVE_HIGH
+
+config NRF52_QDEC_LED_ACTIVE_HIGH
+	bool "LED active in high output"
+
+config NRF52_QDEC_LED_ACTIVE_LOW
+	bool "LED active in low output"
+
+endchoice
+
+endif
+
+endmenu
+
+
+endif # ARCH_CHIP_NRF52

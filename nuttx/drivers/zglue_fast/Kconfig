@@ -1,0 +1,160 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+
+if ARCH_HAVE_FAST
+
+choice
+	prompt "zGlue Architecture selection"
+	default ZEUS2
+	depends on SYSTEM_FAST_DRIVER
+
+config ZEUS1
+	bool "ZEUS1"
+	---help---
+		Enable zGlue Zeus1 (First generation) Architecture
+
+config ZEUS2
+	bool "ZEUS2"
+	---help---
+		Enable zGlue Zeus2 (Second generation) Architecture
+
+endchoice
+
+config FAST_SPI
+	bool "FAST SPI"
+	depends on ZEUS2
+	---help---
+		Enable SPI interface to zGlue FAST Architecture
+
+choice
+	prompt "FAST SPI Clock Frequency"
+	default FASTAPI_1MHZ
+	depends on FAST_SPI
+
+config FASTAPI_125KHZ
+	bool "125KHz"
+	---help---
+		SPI clock frequency of 125KHz
+
+config FASTAPI_250KHZ
+	bool "250KHz"
+	---help---
+		SPI clock frequency of 250KHz
+
+config FASTAPI_500KHZ
+	bool "500KHz"
+	---help---
+		SPI clock frequency of 500KHz
+
+config FASTAPI_1MHZ
+	bool "1MHz"
+	---help---
+		SPI clock frequency of 1Mhz
+
+config FASTAPI_2MHZ
+	bool "2MHz"
+	---help---
+		SPI clock frequency of 2Mhz
+
+config FASTAPI_4MHZ
+	bool "4MHz"
+	---help---
+		SPI clock frequency of 4Mhz
+
+config FASTAPI_8MHZ
+	bool "8MHz"
+	---help---
+		SPI clock frequency of 8Mhz
+
+endchoice
+
+config FAST_I2C
+	bool "FAST I2C"
+	depends on ZEUS2
+	---help---
+		Enable I2C interface to zGlue FAST Architecture
+
+config FAST_I2C_FREQUENCY
+	int "FAST I2C frequency"
+	default 400000
+	range 1 400000
+	depends on FAST_I2C
+
+config FAST_JTAG
+	bool "JTAG"
+	depends on ZEUS1 || ZEUS2
+	---help---
+		Enable JTAG interface to zGlue Architecture. This is SW JTAG
+		where 4 GPIO pins are bit banged to mimic the JTAG specification
+
+config FAST_ULPM_WAKEUP_PIN
+	bool "FAST ULPM wakeup pin"
+	depends on ZEUS2
+	---help---
+		Enable ULPM wake pin
+
+config FAST_FILE_DIRECTORY
+	string "Fast sandbox"
+	depends on SYSTEM_FAST_DRIVER
+	default "/mnt"
+	---help---
+		Absolute pathes in received file names are not accepted.  This
+		configuration value must be set to provide the path to the file
+		storage directory (such as a mountpoint directory).
+
+config FAST_CONFIG_FILE
+	bool "Zglue FAST config file"
+	depends on SYSTEM_FAST_DRIVER
+	---help---
+		Enable FAST configuration file to be stored in the FW flash.
+
+config FLASH_FAST_CONFIG_FILE_LENGTH
+	depends on ZEUS1 || ZEUS2
+	depends on FAST_CONFIG_FILE
+	hex	"Reserved size of FAST configuration file"
+	default 0x1400
+
+choice
+	bool "zGlue FAST config file selection"
+	default ZEUS2_CHICAGO
+	depends on FAST_CONFIG_FILE
+
+config ZEUS1_DALLAS
+	depends on ZEUS1
+	bool "Dallas"
+	---help---
+		Enable zGlue Zeus1 Dallas Architecture
+
+config ZEUS1_AUSTIN
+	depends on ZEUS1
+	bool "Austin"
+	---help---
+		Enable zGlue Zeus1 Austin Architecture
+
+config ZEUS2_CHICAGO
+	depends on ZEUS2
+	bool "chicago"
+	---help---
+		Enable zGlue Zeus2 chicago Architecture
+
+config ZEUS2_CHICAGO_PP
+	depends on ZEUS2
+	bool "chicago_pp"
+	---help---
+		Enable zGlue Zeus2 chicago_pp Architecture
+
+endchoice
+
+config ZEUS2_DEVKIT_FEATURES
+	bool "Enable zeus2 dev kit features"
+	---help---
+		Enable zGlue Zeus2 dev kit features
+		Features include
+		1) PWR clk rdy and fast rdy monitoring
+		2) Access to fast_en_l and fast_en_h pins
+		3) Monitor power config
+
+endif #ARCH_HAVE_FAST

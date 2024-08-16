@@ -1,0 +1,69 @@
+                    FAST support for Zeus1 M
+
+        --amend:  Add more of the driver code from my dev branches.
+                  Create a new board directory, configs/zeus_austin.
+
+        --amend:  Rename the configs board directory to fast_api_debug.
+
+        --amend:  Finish rename changes with updates for Kconfig and
+                  nrf52_serial.c; if CONFIG_DEBUG_FEATURES were not
+                  selected then arch/arm/src/nrf52 would fail to build
+                  because calls to some functions were blocked out
+                  without that config var and -Werror -Wall is set.
+
+        --amend:  Update Kconfig and add config spec variables such
+                  as setting gpio pins for jtag.  Added nsh/ in
+                  configs/fast_api_debug
+
+        --amend:  Garbage associated with getting files to build that
+                  call into the fast_debug driver.
+
+        Enabling fast_jtag_read/write
+
+        --amend:  Correct header blocking defines to reflect
+                  the .git relative path appropriately
+                  Pick up a couple of files that had been missed
+                  in the earlier check-in.
+
+        --amend:  Added "#inclucde "fast_api.h" to  fast_api_zeus1.c
+                  to pick up jtag defines.  Need to reorg this sothat
+                  the api file doesn't have to contain this info which
+                  should be internal only anyway.
+
+        Prep for adding a gpio api
+
+        --amend: Pick up the gpio files that were forgotten.  They are
+                 added here.
+
+        --amend: Add IOC commands for Zeus1.
+
+        --amend: Swap out Dialog SDK gpio calls for nRF52. Get to compile
+                 Still need to update pin values in the calls.
+
+        --amend:  A) Cleanup of the code
+        --amend:  R) Added JTAG driver and kconfig for nrf52
+        --amend:  J) Cleanup the FAST API driver folder
+        --amend:  U) Run a good version of pre_commit for styling.
+        --amend:  N) remove drivers/fast_api/fast_zeus.h
+            :-)
+
+       --amend:  Rebuild the nsh/defconfig file to pick up the new config
+                 sym names converting code references appropriately.
+
+       --amend:  Update defconfig files in configs/fast_api_debug to point
+                 ARCH_BOARD to "fast_api_debug"
+
+       --amend:  Fixup IOCTL switch prep for test compile
+
+       --amend:  After realizing my copy of the api was out of date rebuilt
+                 the header and ioctl command files and brutally forced them
+                 to compile.
+
+       --amend:  Cherry pick changes from Min's 2205
+
+       --amend: Sync up with change 2171
+
+       --amend: Add limit to how much of the flash can be read
+                and returned to the caller.
+
+    Change-Id: Iabf5877443132efe5aa509097c67f52e96eb97db

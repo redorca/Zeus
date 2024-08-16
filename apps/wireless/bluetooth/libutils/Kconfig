@@ -1,0 +1,27 @@
+#
+# For a description of the syntax of this configuration file,
+# see misc/tools/kconfig-language.txt.
+#
+
+if WIRELESS_BT
+
+config BT_LIBUTILS
+	bool "Common bluetooth library routines"
+	default y
+	---help---
+		Some common library routines for bluetooth apps
+
+config BT_MSG_Q_STACKSIZE
+	int "Stack size(bytes) of message queue thread"
+	default 1024
+
+config BT_MSG_Q_MAX_MSG_NUMBER
+	int "The max number of messages"
+	default 32
+
+config BT_MSG_Q_PRIORITY
+	int "Message queue thread Priority"
+	default 64
+
+endif
+	

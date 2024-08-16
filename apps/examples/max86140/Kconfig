@@ -1,0 +1,31 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+config EXAMPLES_MAX86140
+	bool "max86140 example"
+	default n
+	depends on MAX86140
+	---help---
+		Enable the MAX86140 example
+
+if EXAMPLES_MAX86140
+
+config EXAMPLES_MAX86140_PROGNAME
+	string "Program name"
+	default "max86140"
+	depends on BUILD_KERNEL
+	---help---
+		This is the name of the program that will be use when the NSH ELF
+		program is installed.
+
+config EXAMPLES_MAX86140_PRIORITY
+	int "max86140 task priority"
+	default 100
+
+config EXAMPLES_MAX86140_STACKSIZE
+	int "max86140 stack size"
+	default 2048
+
+endif

@@ -1,0 +1,15 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+if BLE_NIMBLE_HAL
+
+#Current nimble support hardware, could be extend in future.
+
+# NRF52xxx
+config BLE_NIMBLE_HAL_NRF52xxx
+	bool "Nimble Support NORDIC NRF52xxx hardware."
+	default n
+
+endif # BLE_NIMBLE_HAL

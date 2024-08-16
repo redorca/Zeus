@@ -1,0 +1,21 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+config EXAMPLES_NIMBLE_CENTRAL
+	bool "Nimble central example"
+	default n
+	---help---
+		Enable the Nimble central example
+
+if EXAMPLES_NIMBLE_CENTRAL
+
+config EXAMPLES_NIMBLE_CENTRAL_PROGNAME
+	string "Program name"
+	default "Nimble central"
+	---help---
+		This is the name of the program that will be use when the Nimble central ELF
+		program is installed.
+
+endif

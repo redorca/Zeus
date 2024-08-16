@@ -1,0 +1,52 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+config SYSTEM_YMODEM_RECEIVER
+	bool "Ymodem receiver command"
+	default n
+	depends on YMODEM_RECEIVER
+	---help---
+		Enable support for ymodem receiver command line interface.
+
+if SYSTEM_YMODEM_RECEIVER
+
+config YMODEM_RECEIVER_MAX_MSG
+	int "max message number"
+	default 5
+	---help---
+		max message number in message queue.
+
+config YMODEM_RECEIVER_MSG_SIZE
+	int "message length"
+	default 32
+	---help---
+		max message length per message.
+
+config YMODEM_RECEIVER_SOURCE_DEVICE
+	string "data source device"
+	default "/dev/ttyS1"
+
+config YMODEM_RECEIVER_DEFAULT_DEST_FILE
+	string "default destination file"
+	default "/media/ymodem"
+	---help---
+		we will write to this file if the user didn't specified it in start command
+
+config YMODEM_RECEIVER_MSG_HANDLE_THREAD_STACK_SIZE
+	int "message handler thread stack size"
+	default 2048
+
+config YMODEM_RECEIVER_BUF_NUM
+	int "buffer number"
+	default 4
+	---help---
+		number of buffers in the buffer queue
+
+config YMODEM_RECEIVER_BUF_SIZE
+	int "buffer length"
+	default 1024
+endif
+
+

@@ -1,0 +1,11 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+config EXAMPLES_ICE40UP
+	bool "iCE40UP example"
+	default n
+	depends on ICE40UP
+	---help---
+		Enable the iCE40UP example

@@ -1,0 +1,25 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+config EXAMPLES_AI
+	bool "AI Demo example"
+	default n
+	depends on ICE40UP
+	---help---
+		Enable the AI demo example
+
+
+choice
+    prompt "motion detection sensor"
+    default AI_MOTION_MC3672
+    depends on EXAMPLES_AI
+
+config AI_MOTION_MC3672
+    bool "MC3672"
+
+config AI_MOTION_LSM6DS3
+    bool "LSM6DS3"
+
+endchoice

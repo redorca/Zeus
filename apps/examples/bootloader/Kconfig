@@ -1,0 +1,30 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+config EXAMPLES_BOOTLOADER
+	bool "\"bootloader by mcuboot\" nuttx example"
+	default n
+	---help---
+		Enable the \"bootloader of mcuboot\" nuttx example
+
+if EXAMPLES_BOOTLOADER
+
+config EXAMPLES_BOOTLOADER_PROGNAME
+	string "Program name"
+	default "bootloader"
+	depends on BUILD_KERNEL
+	---help---
+		This is the name of the program that will be use when the NSH ELF
+		program is installed.
+
+config EXAMPLES_BOOTLOADER_PRIORITY
+	int "bootloader task priority"
+	default 100
+
+config EXAMPLES_BOOTLOADER_STACKSIZE
+	int "bootloader stack size"
+	default 2048
+
+endif
